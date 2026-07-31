@@ -292,6 +292,113 @@ main {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* ===== CHARACTER CARD GRID ===== */
+.char-section {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 900px;
+  margin: 32px auto 0;
+  padding: 0 24px 40px;
+}
+.char-section .section-head {
+  text-align: center; margin-bottom: 28px;
+}
+.char-section .section-head h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
+  font-size: 1.4rem; letter-spacing: -0.03em; margin-bottom: 4px;
+}
+.char-section .section-head p {
+  font-size: 0.85rem; color: var(--ink-lighter);
+}
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.char-detail-card {
+  background: white; border-radius: var(--radius);
+  box-shadow: var(--shadow); overflow: hidden;
+  cursor: pointer; transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+.char-detail-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.char-detail-card.open { border-color: var(--pink); }
+.char-detail-card .card-collapsed {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px;
+}
+.char-detail-card .card-avatar {
+  width: 56px; height: 56px; border-radius: 50%; overflow: hidden;
+  background: var(--cream-2); flex-shrink: 0;
+  box-shadow: 0 2px 8px oklch(22% 0.012 50 / 0.08);
+}
+.char-detail-card .card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.char-detail-card .card-main { flex: 1; min-width: 0; }
+.char-detail-card .card-name {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+  font-size: 1.05rem; letter-spacing: -0.02em; line-height: 1.2;
+}
+.char-detail-card .card-name-jp {
+  font-size: 0.75rem; color: var(--ink-lighter); margin-top: 1px;
+}
+.char-detail-card .card-mbti {
+  display: inline-block; font-size: 0.68rem; font-weight: 700;
+  padding: 2px 10px; border-radius: var(--radius-pill);
+  background: var(--pink-pale); color: var(--pink);
+  letter-spacing: 0.04em; margin-top: 4px;
+}
+.char-detail-card .card-expand-icon {
+  font-size: 0.75rem; color: var(--ink-lighter);
+  transition: transform 0.3s ease; flex-shrink: 0;
+}
+.char-detail-card.open .card-expand-icon { transform: rotate(180deg); }
+.char-detail-card .card-expanded {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.char-detail-card.open .card-expanded { max-height: 600px; }
+.char-detail-card .card-expanded-inner {
+  padding: 0 16px 16px 86px;
+}
+.char-detail-card .card-expanded-inner .card-desc {
+  font-size: 0.85rem; color: var(--ink-light); line-height: 1.7;
+  margin-bottom: 12px;
+}
+.char-detail-card .card-expanded-inner .info-rows {
+  display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px;
+}
+.char-detail-card .card-expanded-inner .info-row {
+  display: flex; gap: 8px; font-size: 0.8rem;
+}
+.char-detail-card .card-expanded-inner .info-row .info-label {
+  font-weight: 600; color: var(--ink); min-width: 52px; flex-shrink: 0;
+}
+.char-detail-card .card-expanded-inner .info-row .info-value {
+  color: var(--ink-light);
+}
+.char-detail-card .card-expanded-inner .voice-box {
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  background: oklch(95% 0.04 355 / 0.5); font-size: 0.8rem;
+  font-weight: 600; color: var(--pink); text-align: center; margin-bottom: 10px;
+}
+.char-detail-card .card-expanded-inner .card-traits {
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+.char-detail-card .card-expanded-inner .card-traits span {
+  font-size: 0.72rem; font-weight: 500; padding: 2px 8px;
+  border-radius: var(--radius-pill); background: var(--cream-2); color: var(--ink-light);
+}
+
+@media (max-width: 520px) {
+  .char-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .char-detail-card .card-collapsed { padding: 12px; gap: 10px; }
+  .char-detail-card .card-avatar { width: 44px; height: 44px; }
+  .char-detail-card .card-name { font-size: 0.95rem; }
+  .char-detail-card .card-expanded-inner { padding-left: 66px; }
+}
+@media (max-width: 380px) {
+  .char-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -336,6 +443,15 @@ main {
   </div>
 </div>
 </main>
+
+<!-- ===== CHARACTER CARD GRID ===== -->
+<section class="char-section">
+  <div class="section-head">
+    <h2>📋 Chiikawa 角色图鉴</h2>
+    <p>点击卡片查看角色详细介绍、设定与 MBTI 类型</p>
+  </div>
+  <div class="char-grid" id="charGrid"></div>
+</section>
 
 <script>
 const CHARS = {
@@ -813,6 +929,203 @@ function showResult(){
 function restartQuiz(){
   showScreen('screen-intro');
 }
+
+// ===== CHARACTER CARD GRID =====
+const CHAR_DETAILS = [
+  {
+    key:'chiikawa', name:'吉伊卡哇', jp:'ちいかわ / Chiikawa',
+    mbti:'INFP · 调停者', color:'#f0a0b0',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/2/2c/AdorableCutieChiikawa.png',
+    desc:'本作主角。一只圆滚滚的白色小仓鼠。虽然胆小爱哭，但在朋友遇到困难时会变得格外勇敢。自带幸运体质，抽奖运极好——现在的白色房子就是抽奖中的。考试运却很差，考除草证考了好多次才通过。',
+    info:[
+      {label:'物种', value:'白色小仓鼠'},
+      {label:'生日', value:'2017年5月1日'},
+      {label:'声优', value:'青木遥（日）· 关云月（中）'},
+      {label:'武器', value:'粉色刺叉'},
+      {label:'等级', value:'除草 5 级'},
+      {label:'住所', value:'抽奖中的白色房子 🏠'}
+    ],
+    voice:'🔊 「哇…」「咿…」「いや！」',
+    traits:['温柔善良','心思细腻','爱哭但勇敢','幸运体质','珍视朋友']
+  },
+  {
+    key:'hachiware', name:'小八', jp:'ハチワレ / Hachiware',
+    mbti:'ENFP · 竞选者', color:'#80b0e0',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/6/61/SweetBabyHachiware2.png',
+    desc:'主角团之一，蓝白相间的猫型角色。名字来源于头部八字的蓝色花纹。是三个主角中唯一能完整使用人类语言说话的角色，因此常担任吉伊和乌萨奇的"翻译官"。乐观开朗、好奇心旺盛，爱弹吉他唱歌——动画片尾曲《自言自语》就是他唱的！',
+    info:[
+      {label:'物种', value:'蓝白猫'},
+      {label:'生日', value:'2020年5月1日'},
+      {label:'声优', value:'田中诚人（日）· 武桢鑫（中）'},
+      {label:'武器', value:'蓝色刺叉'},
+      {label:'等级', value:'除草 5 级'},
+      {label:'住所', value:'没有门的山洞 🏔️'}
+    ],
+    voice:'🔊 「诶～原来是这样！」「好喔～」',
+    traits:['乐观开朗','善于沟通','好奇心强','社交能手','乐于助人']
+  },
+  {
+    key:'usagi', name:'乌萨奇', jp:'うさぎ / Usagi',
+    mbti:'ESTP · 企业家', color:'#f5d060',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/4/43/YahaUsagi.png',
+    desc:'主角团之一，精力充沛的兔子。整天发出「呜呀咿哈～」「蛤？」等怪叫，神出鬼没。是三人中武力值最高的，遇到危险总是冲在最前面。也是三人中除草等级最高的（3级），但没人知道它究竟住在哪里。MBTI为ESTP，热爱冒险，不受世俗规则束缚。',
+    info:[
+      {label:'物种', value:'兔子'},
+      {label:'生日', value:'2019年1月22日'},
+      {label:'声优', value:'小泽亚李（日）· 简单（中）'},
+      {label:'等级', value:'除草 2 级（三人中最高）'},
+      {label:'住所', value:'不明 🕵️'},
+      {label:'MBTI', value:'ESTP（企业家人格）'}
+    ],
+    voice:'🔊 「呜呀咿哈——！」「蛤？」「呀哈！」',
+    traits:['自由奔放','行动力MAX','冒险精神','实力派','古灵精怪']
+  },
+  {
+    key:'momonga', name:'小桃', jp:'モモンガ / Momonga',
+    mbti:'ESFP · 表演者', color:'#c0a0e0',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/a/a0/Momonga.png',
+    desc:'飞鼠型角色。性格任性骄纵，非常喜欢装可爱博取关注与夸奖。如果被拒绝会哭闹或发脾气。粉丝间有一个著名的"灵魂交换"理论——小桃可能和一只叫"大强"的怪物交换了身体。它自己发现了"无限白米泉"，主要靠白米饭维生。和古本（螃蟹书店）是好朋友。',
+    info:[
+      {label:'物种', value:'飞鼠'},
+      {label:'声优', value:'井口裕香（日）· 叶知秋（中）'},
+      {label:'住所', value:'无限白米泉附近 🍚'},
+      {label:'特征', value:'装可爱、任性、爱闹'},
+      {label:'朋友', value:'古本（螃蟹书店）'}
+    ],
+    voice:'🔊 「夸我！快夸我！」',
+    traits:['表现欲强','个性鲜明','喜欢被关注','任性可爱','真实做自己']
+  },
+  {
+    key:'kurimanju', name:'栗子馒头前辈', jp:'くりまんじゅう / Kurimanju',
+    mbti:'ISTP · 鉴赏家', color:'#e8a850',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/9/93/TastyKurimanju.png',
+    desc:'外形像日式点心栗子馒头的角色，但实际上是一只蜜獾。表面憨厚可爱，性格却像个中年大叔——爱喝酒、爱吃零食，说话豪爽。经过艰辛的学习考取了饮酒证照。平时话不多，但行事豪爽、淡然自若，在关键时刻总是很可靠，是大家的支柱之一。',
+    info:[
+      {label:'物种', value:'蜜獾（形似栗子馒头）'},
+      {label:'声优', value:'浅井孝行（日）· 图特哈蒙（中）'},
+      {label:'证照', value:'饮酒证照 🍶'},
+      {label:'特征', value:'沉稳可靠的美食家'}
+    ],
+    voice:'🔊 「哈——！好酒！」',
+    traits:['沉稳可靠','懂得享受','低调有内涵','美食家','关键时刻可靠']
+  },
+  {
+    key:'rakko', name:'海獺勇者', jp:'ラッコ / Rakko',
+    mbti:'ISTJ · 物流师', color:'#70c090',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/6/63/FightOnRakko.png',
+    desc:'讨伐榜排名第一的传奇勇者！头上有十字疤痕，身披披风手持木剑，战斗力极高。是小可爱们崇拜的偶像，也是吉伊和小八的师傅。虽然实力超群，但性格慷慨友善，乐意指导后辈。意外的反差萌是——这位勇者超爱吃甜食！有自己的车，是有车一族。',
+    info:[
+      {label:'物种', value:'海獺'},
+      {label:'声优', value:'内田雄马（日）· 郝祥海（中）'},
+      {label:'排名', value:'讨伐榜 No.1 🏆'},
+      {label:'爱好', value:'吃甜食 🍰'},
+      {label:'特征', value:'有车一族、偶像级人物'}
+    ],
+    voice:'🔊 「跟着我！」',
+    traits:['认真负责','实力至上','责任感强','可靠榜样','有反差萌']
+  },
+  {
+    key:'shisa', name:'狮萨', jp:'シーサー / Shisa',
+    mbti:'ISFJ · 守卫者', color:'#f0c040',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/1/12/RamenPleaseShisa.png',
+    desc:'以冲绳的守护神「风狮爷」（シーサー）为原型的角色。在拉面店「郎」工作，是拉面铠甲的徒弟。性格认真热血，为了在拉面店工作考取了超级打工资格。目前正在努力学习，目标是考取饮酒证照，梦想是能和拉面店师傅一起喝酒。',
+    info:[
+      {label:'原型', value:'冲绳风狮爷'},
+      {label:'声优', value:'岛袋美由利（日）· 阎么么（中）'},
+      {label:'职业', value:'拉面店「郎」店员 🍜'},
+      {label:'目标', value:'考取饮酒证照，和师傅喝酒'},
+      {label:'特征', value:'认真热血、努力实干'}
+    ],
+    voice:'🔊 「我会努力的！」',
+    traits:['努力认真','热血实干','尊重前辈','一丝不苟','坚持不懈']
+  },
+  {
+    key:'kani', name:'古本', jp:'古本屋 / カニ',
+    mbti:'INFJ · 提倡者', color:'#e898a0',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/7/76/Kani-removebg-preview_%281%29.png',
+    desc:'经营二手书店的粉色螃蟹角色。最初只是没有名字的路人角色，后来小桃给它戴上了螃蟹头带后正式有了名字和设计。性格温柔善良，热爱阅读。和小桃是好朋友（尽管小桃性格任性）。「古本」在日语中就是"旧书"的意思。',
+    info:[
+      {label:'物种', value:'螃蟹'},
+      {label:'声优', value:'春海百乃（日）'},
+      {label:'职业', value:'二手书店老板 📚'},
+      {label:'生日', value:'2020年8月29日'},
+      {label:'朋友', value:'小桃（飞鼠）'}
+    ],
+    voice:'🔊 「欢迎光临～」',
+    traits:['温和善良','热爱知识','安静内敛','待人友善','包容力强']
+  },
+  {
+    key:'armor', name:'手工铠甲', jp:'手作り鎧さん',
+    mbti:'ENFJ · 主人公', color:'#80c090',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png',
+    desc:'穿着手工打造的可爱铠甲的盔甲人。和其他盔甲人不同，他性格温柔，热爱手工制作。喜欢可爱的东西，会亲手缝制睡衣。盔甲人是Chiikawa世界中的重要种族，负责提供工作和经营商店。手工铠甲是其中最为温柔的一位。',
+    info:[
+      {label:'声优', value:'杉田智和（日）· 乔木心（中）'},
+      {label:'特长', value:'手工制作 🧵'},
+      {label:'特征', value:'性格温柔、喜欢可爱的东西'},
+      {label:'身份', value:'盔甲人族群中的一员'}
+    ],
+    voice:'🔊 「做出来了哦～」',
+    traits:['心灵手巧','性格温柔','乐于助人','有创造力','审美独特']
+  },
+  {
+    key:'anoko', name:'那孩子', jp:'あのこ / Anoko',
+    mbti:'INTJ · 建筑师', color:'#b898d0',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/b/ba/Anoko1.png',
+    desc:'外表看起来毛茸茸的巨大怪物，但据推测它曾经是吉伊在工厂工作的同事。和其他怪物不同，它似乎记得自己作为小可爱时的记忆，并且并不怀念过去。虽然长得可爱毛茸茸，但被列为危险怪物。关于它过去的真实身份，粉丝圈中有许多猜测。',
+    info:[
+      {label:'身份', value:'怪物（前同事？）'},
+      {label:'声优', value:'青山吉能（日）'},
+      {label:'危险度', value:'⚠️ 高'},
+      {label:'特征', value:'神秘、独立、深藏不露'}
+    ],
+    voice:'🔊 「…………」',
+    traits:['神秘独立','洞察力强','独立思考','深藏不露','有策略性']
+  }
+];
+
+function renderCharCards(){
+  const grid = document.getElementById('charGrid');
+  let html = '';
+  CHAR_DETAILS.forEach((ch, idx) => {
+    html += `
+    <div class="char-detail-card" id="card-${ch.key}" onclick="toggleCard('${ch.key}')">
+      <div class="card-collapsed">
+        <div class="card-avatar"><img src="${ch.img}" alt="${ch.name}" loading="lazy"></div>
+        <div class="card-main">
+          <div class="card-name">${ch.name}</div>
+          <div class="card-name-jp">${ch.jp}</div>
+          <div class="card-mbti">${ch.mbti}</div>
+        </div>
+        <span class="card-expand-icon">▼</span>
+      </div>
+      <div class="card-expanded">
+        <div class="card-expanded-inner">
+          <p class="card-desc">${ch.desc}</p>
+          <div class="info-rows">
+            ${ch.info.map(i => `<div class="info-row"><span class="info-label">${i.label}</span><span class="info-value">${i.value}</span></div>`).join('')}
+          </div>
+          <div class="voice-box">${ch.voice}</div>
+          <div class="card-traits">${ch.traits.map(t => `<span>${t}</span>`).join('')}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function toggleCard(key){
+  const card = document.getElementById('card-' + key);
+  if (!card) return;
+  // Close all other open cards
+  document.querySelectorAll('.char-detail-card.open').forEach(c => {
+    if (c !== card) c.classList.remove('open');
+  });
+  card.classList.toggle('open');
+}
+
+// Render cards on page load
+renderCharCards();
 </script>
 </body>
 </html>
