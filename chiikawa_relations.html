@@ -529,8 +529,9 @@ viewport.addEventListener('wheel', e => {
 
 viewport.addEventListener('dblclick', e => {
   if (e.target.closest('.node-card')) return;
-  scale=1;panX=0;panY=0; Object.keys(BASE).forEach(k=>{pos[k].x=BASE[k].x;pos[k].y=BASE[k].y;});
-  render(); closePanel();
+  Object.keys(BASE).forEach(k=>{pos[k].x=BASE[k].x; pos[k].y=BASE[k].y;});
+  recenter();
+  closePanel();
 });
 
 viewport.addEventListener('click', e => {
@@ -540,17 +541,22 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closePanel(); }
 
 // ════════════════ INIT ════════════════
 function recenter() {
-  const w = viewport.clientWidth, h = viewport.clientHeight;
-  const c = BASE.chiikawa;
-  panX = w/2 - c.x;
-  panY = h/2 - c.y;
-  scale = Math.min(w/1250, h/820, 0.9);
-  // reset positions
-  Object.keys(BASE).forEach(k => { pos[k].x = BASE[k].x; pos[k].y = BASE[k].y; });
-  render();
+  requestAnimationFrame(() => {
+    const w = viewport.clientWidth, h = viewport.clientHeight;
+    if (w <= 0 || h <= 0) return;
+    const c = BASE.chiikawa;
+    scale = Math.max(0.35, Math.min(w/1200, h/780, 0.9));
+    panX = w/2 - c.x * scale;
+    panY = h/2 - c.y * scale;
+    Object.keys(BASE).forEach(k => { pos[k].x = BASE[k].x; pos[k].y = BASE[k].y; });
+    render();
+  });
 }
-window.addEventListener('resize', recenter);
+// Run twice to handle layout settling on mobile
 recenter();
+setTimeout(recenter, 300);
+setTimeout(recenter, 800);
+window.addEventListener('resize', recenter);
 </script>
 </body>
 </html>
