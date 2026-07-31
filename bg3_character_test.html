@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>博德之门3 · 你是哪位费伦角色？</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;800;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#c9a24e;--gold-light:#e0c87a;--bg:#111114;--card:#1a1a20;--card2:#22222a;--card3:#2a2a34;--ink:#e8e6e0;--ink2:#b0aea8;--ink3:#787670;--r:16px;--rs:12px;--rp:999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:clip}
+body{overflow-x:clip;font-family:'Noto Sans SC',system-ui,sans-serif;font-size:16px;line-height:1.65;color:var(--ink);background:var(--bg);min-height:100dvh}
+body::before{content:"";position:fixed;top:-150px;right:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,78,0.08),transparent);pointer-events:none;z-index:0}
+header{position:relative;z-index:10;padding:14px 24px;max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Cinzel',serif;font-weight:800;font-size:1.3rem;color:var(--gold);letter-spacing:0.04em;text-decoration:none}
+.logo span{color:var(--ink3);font-size:0.7rem}
+nav a{font-size:0.85rem;color:var(--ink2);text-decoration:none;margin-left:16px}
+nav a:hover{color:var(--gold)}
+main{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;padding:20px 24px 40px}
+.quiz{width:100%;max-width:660px;background:var(--card);border-radius:var(--r);border:1px solid rgba(201,162,78,0.15);box-shadow:0 12px 48px rgba(0,0,0,0.6);padding:36px 32px 28px;min-height:400px}
+.pg{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.pg-bar{flex:1;height:6px;background:var(--card3);border-radius:999px;overflow:hidden}
+.pg-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e0c060);border-radius:999px;transition:width .5s}
+.pg-txt{font-size:.75rem;font-weight:600;color:var(--ink3);white-space:nowrap;font-family:'Cinzel',serif}
+.scr{display:none}.scr.on{display:block}
+
+#s0{text-align:center;padding:20px 0}
+.icons{display:flex;justify-content:center;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+.icons .ic{width:56px;height:56px;border-radius:50%;overflow:hidden;border:2px solid rgba(201,162,78,0.35);background:var(--card3);animation:fl 3s ease-in-out infinite;display:flex;align-items:center;justify-content:center;font-size:1.5rem;line-height:1}
+.icons .ic:nth-child(2){animation-delay:.5s}.icons .ic:nth-child(3){animation-delay:1s}.icons .ic:nth-child(4){animation-delay:1.5s}.icons .ic:nth-child(5){animation-delay:2s}
+.icons .ic img{width:100%;height:100%;object-fit:cover;display:block}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+h1{font-family:'Cinzel',serif;font-weight:800;font-size:1.8rem;margin-bottom:8px;letter-spacing:0.02em;color:var(--gold)}
+h1 em{color:var(--ink);font-style:normal}
+.sub{color:var(--ink2);font-size:.95rem;margin-bottom:6px;line-height:1.7}
+.sub2{color:var(--ink3);font-size:.85rem;margin-bottom:24px}
+.btn{padding:14px 36px;border-radius:var(--rp);font-family:'Cinzel',serif;font-weight:700;font-size:.9rem;border:none;cursor:pointer;transition:all .2s;letter-spacing:0.04em}
+.btn-go{background:linear-gradient(135deg,var(--gold),#b8942e);color:#111}
+.btn-go:hover{background:linear-gradient(135deg,var(--gold-light),var(--gold));transform:translateY(-1px);box-shadow:0 4px 20px rgba(201,162,78,0.3)}
+.btn-go:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-bk{background:var(--card3);color:var(--ink2)}
+.btn-bk:hover{background:#3a3a46}
+
+.qn{font-family:'Cinzel',serif;font-size:.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:4px}
+.qt{font-weight:700;font-size:1.2rem;line-height:1.4;margin-bottom:22px;color:var(--ink)}
+.ops{display:flex;flex-direction:column;gap:8px}
+.op{display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:var(--rs);border:2px solid var(--card3);cursor:pointer;transition:all .2s;font-size:.92rem;color:var(--ink2);line-height:1.5}
+.op:hover{border-color:rgba(201,162,78,0.4);background:rgba(201,162,78,0.06)}
+.op.sel{border-color:var(--gold);background:rgba(201,162,78,0.1);color:var(--ink);font-weight:500}
+.op .rd{width:20px;height:20px;border-radius:50%;border:2px solid var(--card3);flex-shrink:0}
+.op.sel .rd{border-color:var(--gold);background:var(--gold)}
+.op.sel .rd::after{content:"";display:block;width:6px;height:6px;border-radius:50%;background:var(--bg);margin:5px}
+.btns{display:flex;gap:10px;margin-top:22px;justify-content:space-between}
+.btns .btn{padding:10px 24px;font-size:.8rem}
+.btn-bk{visibility:hidden}.btn-bk.sh{visibility:visible}
+.qp{text-align:center;font-size:.8rem;color:var(--ink3);margin-top:16px}
+
+#s2{padding:10px 0}.rh{text-align:center;margin-bottom:28px}
+.rh .badge{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;padding:4px 12px;border-radius:var(--rp);background:rgba(201,162,78,0.15);color:var(--gold);margin-bottom:8px}
+.rh h2{font-family:'Cinzel',serif;font-weight:800;font-size:1.5rem;color:var(--gold);letter-spacing:0.04em}
+.t1{display:flex;flex-wrap:wrap;gap:24px;align-items:center;background:rgba(201,162,78,0.06);border-radius:var(--r);border:1px solid rgba(201,162,78,0.15);padding:20px 24px;margin-bottom:20px}
+.t1-av{flex-shrink:0;width:110px;height:110px;border-radius:50%;overflow:hidden;background:var(--card3);border:3px solid var(--gold);box-shadow:0 4px 20px rgba(201,162,78,0.2);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.t1-av img{width:100%;height:100%;object-fit:cover}
+.t1-info{flex:1;min-width:200px}
+.t1-info .rk{display:inline-block;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;padding:2px 10px;border-radius:var(--rp);background:var(--gold);color:#111;margin-bottom:6px}
+.t1-info h3{font-family:'Cinzel',serif;font-weight:800;font-size:1.4rem;margin-bottom:2px;color:var(--gold)}
+.t1-info .en{font-size:.85rem;color:var(--ink3);margin-bottom:4px}
+.mb{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.mb .bt{flex:1;height:8px;background:var(--card3);border-radius:999px;overflow:hidden}
+.mb .bf{height:100%;background:linear-gradient(90deg,var(--gold),#e0c060);border-radius:999px;transition:width 1s}
+.mb .pt{font-weight:700;font-size:.9rem;color:var(--gold);min-width:38px}
+.cls{font-size:.8rem;font-weight:600;color:var(--gold);margin-bottom:8px}
+.dsc{font-size:.88rem;color:var(--ink2);line-height:1.7}
+.trs{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.trs span{font-size:.75rem;font-weight:500;padding:2px 10px;border-radius:var(--rp);background:var(--card3);color:var(--ink2)}
+.t1-pct{font-family:'Cinzel',serif;font-weight:800;font-size:2rem;color:var(--gold);flex-shrink:0}
+
+.t23{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.tc{border:2px solid var(--card3);border-radius:var(--rs);overflow:hidden;cursor:pointer}.tc:hover{border-color:rgba(201,162,78,0.4)}
+.tc-hd{display:flex;align-items:center;gap:14px;padding:12px 16px;background:var(--card2)}
+.tc-hd .rkb{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;font-weight:700;color:#111;flex-shrink:0}
+.rkb.r2{background:#8899aa}.rkb.r3{background:#8a6e4e}
+.tc-hd .ma{width:44px;height:44px;border-radius:50%;overflow:hidden;background:var(--card3);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+.tc-hd .ma img{width:100%;height:100%;object-fit:cover}
+.tc-hd .cn{flex:1;font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--ink)}
+.tc-hd .cp{font-weight:700;font-size:.9rem;color:var(--ink3);flex-shrink:0}
+.tc-hd .ei{font-size:.8rem;color:var(--ink3);transition:transform .2s;flex-shrink:0}
+.tc.opn .ei{transform:rotate(180deg)}
+.tc-dt{max-height:0;overflow:hidden;transition:max-height .4s;background:var(--card3)}
+.tc.opn .tc-dt{max-height:400px}
+.tc-in{padding:0 16px 16px 58px}
+.tc-in .cls{font-size:.75rem;font-weight:600;color:var(--gold);margin-bottom:4px}
+.tc-in p{font-size:.85rem;color:var(--ink2);line-height:1.7;margin-bottom:8px}
+.tc-in .trs span{background:var(--card2)}
+.rr{text-align:center;margin-top:16px}
+
+.cs{position:relative;z-index:1;width:100%;max-width:1000px;margin:32px auto 0;padding:0 24px 48px}
+.cs .sh{text-align:center;margin-bottom:28px}
+.cs .sh h2{font-family:'Cinzel',serif;font-weight:800;font-size:1.4rem;letter-spacing:0.04em;margin-bottom:4px;color:var(--gold)}
+.cs .sh p{font-size:.85rem;color:var(--ink3)}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:16px}
+.cdc{background:var(--card);border-radius:var(--r);box-shadow:0 4px 24px rgba(0,0,0,0.4);overflow:hidden;cursor:pointer;transition:all .3s;border:2px solid var(--card3)}
+.cdc:hover{box-shadow:0 12px 48px rgba(0,0,0,0.6);transform:translateY(-2px);border-color:rgba(201,162,78,0.3)}
+.cdc.opn{border-color:var(--gold)}
+.cdc-cl{display:flex;align-items:center;gap:14px;padding:16px}
+.cdc-av{width:56px;height:56px;border-radius:50%;overflow:hidden;background:var(--card3);flex-shrink:0;border:1px solid rgba(201,162,78,0.2);display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+.cdc-av img{width:100%;height:100%;object-fit:cover}
+.cdc-mn{flex:1;min-width:0}
+.cdc-nm{font-family:'Cinzel',serif;font-weight:700;font-size:1rem;letter-spacing:0.03em;line-height:1.2;color:var(--gold)}
+.cdc-nc{font-size:.8rem;color:var(--ink2);margin-top:1px}
+.cdc-cb{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 10px;border-radius:var(--rp);background:rgba(201,162,78,0.12);color:var(--gold);letter-spacing:0.04em;margin-top:4px}
+.cdc-ei{font-size:.75rem;color:var(--ink3);transition:transform .3s;flex-shrink:0}
+.cdc.opn .cdc-ei{transform:rotate(180deg)}
+.cdc-ex{max-height:0;overflow:hidden;transition:max-height .5s}
+.cdc.opn .cdc-ex{max-height:800px}
+.cdc-in{padding:0 16px 16px 86px}
+.cdc-in .dsc{font-size:.85rem;color:var(--ink2);line-height:1.7;margin-bottom:12px}
+.cdc-info{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.cdc-ir{display:flex;gap:8px;font-size:.8rem}
+.cdc-ir .il{font-weight:600;color:var(--gold);min-width:52px;flex-shrink:0}
+.cdc-ir .iv{color:var(--ink2)}
+.cdc-vo{padding:10px 14px;border-radius:var(--rs);background:rgba(201,162,78,0.1);font-size:.8rem;font-weight:600;color:var(--gold);text-align:center;margin-bottom:10px;font-style:italic}
+.cdc-tr{display:flex;flex-wrap:wrap;gap:4px}
+.cdc-tr span{font-size:.72rem;font-weight:500;padding:2px 8px;border-radius:var(--rp);background:var(--card3);color:var(--ink2)}
+
+@media(max-width:768px){
+  header{padding:10px 18px}.logo{font-size:1.05rem}nav a{font-size:.8rem;margin-left:8px}
+  main{padding:16px 14px 30px}.quiz{padding:24px 18px 22px;border-radius:var(--rs)}
+  h1{font-size:1.4rem}.sub{font-size:.88rem}.sub2{font-size:.8rem}.ic{width:48px;height:48px;font-size:1.2rem}
+  .qt{font-size:1.08rem}.op{padding:12px 14px;font-size:.9rem}.btn{padding:12px 28px;font-size:.85rem}
+  .btns{flex-wrap:wrap;gap:8px}.btns .btn{flex:1;min-width:100px;text-align:center}
+  .t1{flex-direction:column;text-align:center;padding:16px;gap:14px}.t1-av{width:90px;height:90px;font-size:2.4rem;margin:0 auto}.t1-info{min-width:0}.trs{justify-content:center}.t1-pct{font-size:1.5rem}
+  .cs{padding:0 14px 36px;margin-top:24px}.cg{grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:12px}
+  .cdc-cl{padding:12px;gap:10px}.cdc-av{width:48px;height:48px;font-size:1.4rem}.cdc-nm{font-size:.9rem}.cdc-cb{font-size:.65rem}
+  .cdc-in{padding:0 14px 14px}
+}
+@media(max-width:480px){
+  body{font-size:15px}main{padding:12px 10px 24px}.quiz{padding:18px 14px 18px}
+  h1{font-size:1.2rem}.sub br{display:none}.sub2{font-size:.75rem}.icons{gap:10px}.ic{width:42px;height:42px;font-size:1.1rem}
+  .qt{font-size:1rem;margin-bottom:16px}.op{padding:10px 12px;font-size:.85rem;gap:10px}.op .rd{width:18px;height:18px}
+  .btn{padding:10px 22px;font-size:.8rem}.char-grid{gap:10px}
+}
+</style>
+</head>
+<body>
+<header>
+  <a href="#" class="logo">BALDUR'S GATE <span>III</span></a>
+  <nav><a href="#chars">角色图鉴</a></nav>
+</header>
+
+<main>
+<div class="quiz" id="quiz">
+  <div class="scr on" id="s0">
+    <div class="icons" id="iconsEl"></div>
+    <h1>你是哪一位 <em>费伦角色</em>？</h1>
+    <p class="sub">45道性格与抉择测试题，找出博德之门3中和你灵魂最契合的角色。<br>覆盖20位角色——同伴、Boss、邪神与夺心魔！</p>
+    <p class="sub2">⏱ 约3–5分钟 · 结果展示TOP3相似角色</p>
+    <button class="btn btn-go" onclick="start()">命运掷骰 🎲</button>
+  </div>
+
+  <div class="scr" id="s1">
+    <div class="pg"><div class="pg-bar"><div class="pg-fill" id="pgf" style="width:0%"></div></div><span class="pg-txt" id="pgt">1/46</span></div>
+    <div id="qa"></div>
+  </div>
+
+  <div class="scr" id="s2">
+    <div class="rh"><span class="badge">🎉 诊断完成</span><h2>你的灵魂角色</h2></div>
+    <div id="ra"></div>
+  </div>
+</div>
+</main>
+
+<section class="cs" id="chars">
+  <div class="sh"><h2>📜 费伦角色图鉴</h2><p>点击卡片查看详细介绍 — 共20位角色</p></div>
+  <div class="cg" id="cg"></div>
+</section>
+
+<script>
+// ———————————————————————————————
+// DATA
+// ———————————————————————————————
+var IMG = {
+  astarion:'https://bg3.wiki/w/images/1/1b/Portrait_Astarion.png',
+  shadowheart:'https://bg3.wiki/w/images/7/7e/Portrait_Shadowheart.png',
+  gale:'https://bg3.wiki/w/images/1/11/Portrait_Gale.png',
+  karlach:'https://bg3.wiki/w/images/b/b2/Portrait_Karlach.png',
+  wyll:'https://bg3.wiki/w/images/6/6d/Portrait_Wyll.png',
+  laezel:'https://bg3.wiki/w/images/8/86/Portrait_Lae%27zel.png',
+  halsin:'https://bg3.wiki/w/images/f/fe/Portrait_Halsin.png',
+  minthara:'https://bg3.wiki/w/images/8/8e/Portrait_Minthara_%28263%29.png',
+  jaheira:'https://bg3.wiki/w/images/a/a8/Portrait_Jaheira.png',
+  minsc:'https://bg3.wiki/w/images/d/d6/Portrait_Minsc.png',
+  orin:'https://bg3.wiki/w/images/e/e4/Portrait_Orin.png',
+  ketheric:'https://bg3.wiki/w/images/f/f2/Portrait_Ketheric_Thorm.png',
+  gortash:'https://bg3.wiki/w/images/5/59/Portrait_Enver_Gortash.png',
+  raphael:'https://bg3.wiki/w/images/3/39/Portrait_Raphael.png',
+  mizora:'https://bg3.wiki/w/images/7/77/Portrait_Mizora.png',
+  bhaal:'https://bg3.wiki/w/images/e/e4/Portrait_Orin.png',
+  myrkul:'https://bg3.wiki/w/images/f/f2/Portrait_Ketheric_Thorm.png',
+  bane:'https://bg3.wiki/w/images/5/59/Portrait_Enver_Gortash.png',
+  emperor:'https://bg3.wiki/w/images/c/c6/Portrait_The_Emperor.png',
+  aylin:'https://bg3.wiki/w/images/8/83/Aylin_Face.png'
+};
+
+// img tag builder — no & chars in onerror, clean
+function imgtag(k,fb){
+  var u=IMG[k];
+  if(!u)return'<span>'+fb+'</span>';
+  return'<img src="'+u+'" alt="" loading="lazy" referrerpolicy="no-referrer" crossorigin="anonymous" style="width:100%;height:100%;object-fit:cover" onerror="if(!this.r){this.r=1;this.src=\'https://images.weserv.nl/?url='+encodeURIComponent(u)+'&w=200&h=200&fit=cover&mask=circle&l=9\'}else{this.remove();this.parentElement.textContent=\''+fb+'\';this.parentElement.style.fontSize=\'1.6rem\'}">';
+}
+
+var CHARS_ALL = [
+  {k:'astarion',en:'Astarion',cn:'阿斯代伦',cl:'游荡者 · 吸血鬼衍体',fb:'🦇',
+   ds:'高精灵吸血鬼衍体，被卡扎多尔折磨了两个世纪。魅力超群，擅长偷袭——既在战场也在对话中。浮华表面下是一个渴求被真正看见的灵魂。',
+   if:[['种族','高精灵(吸血鬼衍体)'],['属性','敏捷17/魅力14'],['背景','贵族'],['声优','Neil Newbon'],['个人任务','苍白精灵']],
+   vo:'"别碰我——除非我允许你。……好吧，也许你可以。"',tr:['魅力超群','向往自由','毒舌甜心','内心创伤','嗜血贵族']},
+  {k:'shadowheart',en:'Shadowheart',cn:'影心',cl:'牧师 · 诡术领域',fb:'🌑',
+   ds:'半精灵牧师，身负神圣使命却对自己的记忆充满怀疑。表面冷漠疏离，但对夜莺和动物有着出人意料的温柔。信仰之路上充满怀疑与挣扎。',
+   if:[['种族','高等半精灵'],['属性','感知17/敏捷14'],['背景','侍僧'],['声优','Jennifer English'],['个人任务','夜莺之歌']],
+   vo:'"诸神对我的期望是什么呢？……我想，连诸神自己也不知道。"',tr:['神秘谨慎','外冷内热','喜爱动物','信仰之问','记忆之谜']},
+  {k:'gale',en:'Gale',cn:'盖尔',cl:'法师 · 塑能学派',fb:'📖',
+   ds:'人类大法师，密斯特拉前选民。曾为追求禁忌知识而将毁灭法球封入胸中。博学风趣、爱猫、厨艺不错——但也深知傲慢的代价。',
+   if:[['种族','人类'],['属性','智力17/体质15'],['背景','智者'],['声优','Tim Downie'],['个人任务','湮灭法球']],
+   vo:'"知识和毁灭之间，往往只隔着一层薄薄的傲慢。"',tr:['学识渊博','健谈风趣','爱猫人士','浪漫主义','傲慢与谦逊']},
+  {k:'karlach',en:'Karlach',cn:'卡菈克',cl:'野蛮人 · 炎狱引擎',fb:'🔥',
+   ds:'扎瑞尔提夫林野蛮人，胸腔中燃烧着炎狱引擎。在地狱当了十年战争机器，逃出后只有有限时间活着——所以用尽每一秒热烈地活。',
+   if:[['种族','扎瑞尔提夫林'],['属性','力量17/体质14'],['背景','门外汉'],['声优','Samantha Béart'],['个人任务','炽热之心']],
+   vo:'"有人说过你闻起来超级好吗？——是的，我对每个人都这么说。"',tr:['热情似火','乐观坚韧','正义感强','渴望触碰','地狱老兵']},
+  {k:'wyll',en:'Wyll',cn:'威尔',cl:'魔导士 · 边境之刃',fb:'⚔️',
+   ds:'人类魔导士，被誉为"边境之刃"的英雄。为拯救博德之门与恶魔米佐拉签订契约。依然相信正义——只是开始怀疑英雄的代价。',
+   if:[['种族','人类'],['属性','魅力17/敏捷13'],['背景','民间英雄'],['声优','Theo Solomon'],['个人任务','边境之刃']],
+   vo:'"英雄不是从不犯错的人——而是敢于为错误付出代价的人。"',tr:['英雄主义','浪漫理想','勇于牺牲','舞蹈爱好者','契约囚徒']},
+  {k:'laezel',en:"Lae'zel",cn:'莱埃泽尔',cl:'战士 · 战斗大师',fb:'🗡️',
+   ds:'吉斯洋基战士，来自星界的悍将。从小被训练成终极武器，对软弱毫无耐心。但获得她尊重后，她会是最忠实的战友——愿为你与整个文明为敌。',
+   if:[['种族','吉斯洋基'],['属性','力量17/敏捷13'],['背景','士兵'],['声优','Devora Wilde'],['个人任务','吉斯洋基战士']],
+   vo:'"Chk——你们这些弱不禁风的软皮生物。"',tr:['实力至上','直率果断','绝对忠诚','行动派','星界武士']},
+  {k:'halsin',en:'Halsin',cn:'哈尔辛',cl:'德鲁伊 · 月之结社',fb:'🌿',
+   ds:'木精灵德鲁伊，翡翠林地首席大德鲁伊。能变形为巨熊——但内心比任何人类更温柔。信奉自然平衡，也相信必要时自然本身也是无情的。',
+   if:[['种族','木精灵'],['属性','感知17/力量16'],['背景','异乡人'],['声优','Dave Jones'],['个人任务','林地守护者']],
+   vo:'"橡树之父教导我们：一切生命都在自然循环中互相依存。"',tr:['温和智慧','热爱自然','变形大师','守护者','内心坚毅']},
+  {k:'minthara',en:'Minthara',cn:'明萨拉',cl:'圣骑士 · 复仇之誓',fb:'🕷️',
+   ds:'卓尔精灵圣骑士，魔索布莱城贵族。曾是至上真神教高级指挥官，被洗脑后犯下罪行。她不会请求原谅——但会为复仇战斗至最后一刻。',
+   if:[['种族','卓尔精灵'],['属性','力量16/魅力15'],['背景','贵族'],['声优','Emma Gregory'],['个人任务','复仇之誓']],
+   vo:'"以绝对之名——不，从此以后，只有我的名字。"',tr:['果断无情','绝对忠诚','权力意志','卓尔贵族','复仇化身']},
+  {k:'jaheira',en:'Jaheira',cn:'贾希拉',cl:'战士/德鲁伊 · 竖琴手',fb:'🦅',
+   ds:'半精灵战士兼德鲁伊，竖琴手传奇特工。曾在博德之门1&2中与巴尔后裔并肩作战，历经沧桑仍坚守岗位。她很少夸人——但得到她认可，意味着一切。',
+   if:[['种族','半精灵'],['属性','感知18/敏捷16'],['背景','竖琴手特工'],['声优','Tracy Wiles'],['个人任务','竖琴手的传承']],
+   vo:'"我见过比你想象中更多的黄昏，小子——但我仍然站在这里。"',tr:['务实老练','可靠坚定','身经百战','竖琴手','嘴硬心软']},
+  {k:'minsc',en:'Minsc',cn:'明斯克',cl:'游侠 · 狂战士',fb:'🐹',
+   ds:'拉什玛人类游侠，带着仓鼠伙伴"布布"走遍费伦大陆。心地单纯、忠诚勇敢，正义就是踢坏蛋的屁股——简单而永恒。',
+   if:[['种族','拉什玛人类'],['属性','力量17/敏捷14'],['背景','民间英雄'],['声优','Matthew Mercer'],['个人任务','布布与正义']],
+   vo:'"Go for the eyes, Boo！GO FOR THE EYES！"',tr:['善良纯粹','勇敢无畏','憨直可爱','正义必胜','布布是最好的']},
+  {k:'orin',en:'Orin the Red',cn:'奥林·血红',cl:'变形怪刺客 · 巴尔选民',fb:'🩸',
+   ds:'变形怪刺客，巴尔选民。将杀戮视为艺术，享受猎物眼中的恐惧。能变成任何人的模样——最不可预测的敌人。渴望父亲巴尔的关注。',
+   if:[['种族','变形怪'],['身份','巴尔选民'],['武器','变形匕首'],['声优','Maggie Robertson'],['特征','疯狂艺术家']],
+   vo:'"他们说我是疯子——我却说，我不过是比别人更诚实地面对欲望而已。"',tr:['杀戮艺术家','变形大师','不可预测','渴望认可','巴尔之女']},
+  {k:'ketheric',en:'Ketheric Thorm',cn:'凯瑟里克·索姆',cl:'亡灵将军 · 米尔寇选民',fb:'💀',
+   ds:'曾是月出之塔的正义领袖，挚爱之死让他堕入黑暗，选择侍奉米尔寇重塑王国。不可阻挡的亡灵将军——但驱动他的是不可愈合的破碎。',
+   if:[['种族','半精灵(亡灵化)'],['身份','米尔寇选民'],['特征','不死之身'],['声优','J.K. Simmons'],['弱点','对逝去女儿的记忆']],
+   vo:'"死亡不是终点——我对它了如指掌。我已死了无数次，仍站在这里。"',tr:['悲剧英雄','不可阻挡','亡灵之主','被悲伤驱动','钢铁意志']},
+  {k:'gortash',en:'Enver Gortash',cn:'恩维尔·戈塔什',cl:'暴君 · 班恩选民',fb:'👑',
+   ds:'曾被父母卖掉的孩子，如今是博德之门的钢铁大公爵。班恩选民，用精准战略和冷酷交易构建了自己的权力帝国。',
+   if:[['种族','人类'],['身份','班恩选民/大公爵'],['特征','钢铁守卫军团'],['声优','Jason Isaacs'],['弱点','低估情感的力量']],
+   vo:'"秩序不是天生的——它由那些有胆量举起铁锤的人锻造出来。"',tr:['精致独裁','战略天才','秩序至上','精准算计','童年创伤']},
+  {k:'raphael',en:'Raphael',cn:'拉斐尔',cl:'坎比翁 · 希望之邸主人',fb:'😈',
+   ds:'墨菲斯托之子，希望之邸的魔鬼主人。热爱戏剧、诗歌和歌剧——甚至为自己谱写了主题曲。他相信自己掌握一切，这往往是他的致命弱点。',
+   if:[['种族','坎比翁(半魔鬼)'],['身份','墨菲斯托之子'],['住所','希望之邸(地狱)'],['声优','Andrew Wincott'],['爱好','诗歌/歌剧']],
+   vo:'"生命不过是一首转瞬即逝的歌——而我，是谱写旋律的人。"',tr:['戏剧大师','灵魂交易','自恋自负','热爱艺术','魔鬼诗人']},
+  {k:'mizora',en:'Mizora',cn:'米佐拉',cl:'坎比翁 · 扎瑞尔侍从',fb:'🔥👿',
+   ds:'大魔鬼扎瑞尔侍从，威尔契约主人。在条款之间跳舞，永远在措辞中占据上风。冷血精准——但对特定人偶尔露出微妙的偏心。',
+   if:[['种族','坎比翁(半魔鬼)'],['身份','扎瑞尔侍从'],['契约者','威尔'],['声优','Tamaryn Payne'],['特征','文字游戏大师']],
+   vo:'"契约就是契约——我从不违约。但其中的解释……由我决定。"',tr:['契约大师','文字游戏','精准算计','冰冷优雅','微妙偏心']},
+  {k:'bhaal',en:'Bhaal',cn:'巴尔',cl:'谋杀之神 · Lord of Murder',fb:'🗡️💀',
+   ds:'三邪神——谋杀之神。一切杀戮的本源冲动、鲜血与毁灭的至高化身。死亡是他最伟大的艺术品。巴尔之子在费伦大陆犯下滔天罪行。',
+   if:[['地位','三邪神·谋杀之神'],['领域','死亡/谋杀'],['象征','滴血的头骨'],['信徒','巴尔之子'],['关联','BG1&2核心反派']],
+   vo:'"我杀你，不是因为恨——而是因为爱你。只有终结你，才能让你成为我的永恒。"',tr:['纯粹杀戮','鲜血艺术家','毁灭化身','狂热信徒','终结一切']},
+  {k:'myrkul',en:'Myrkul',cn:'米尔寇',cl:'死亡之神 · Lord of Bones',fb:'☠️',
+   ds:'三邪神——死亡之神。寂静的注视——不疾不徐地等待所有生命的终结。生者的奔忙毫无意义，唯有永恒虚空才是真理。',
+   if:[['地位','三邪神·死亡之神'],['领域','死亡/亡者'],['象征','白骨手爪'],['信徒','亡灵法师'],['代表','凯瑟里克·索姆']],
+   vo:'"死亡不是惩罚——它只是结局。而我，见过所有结局。"',tr:['死寂注视','冷峻不羁','接受虚无','白骨君王','永恒守望']},
+  {k:'bane',en:'Bane',cn:'班恩',cl:'暴政之神 · The Black Lord',fb:'⛓️',
+   ds:'三邪神之首——暴政之神。绝对秩序、残酷统治和对权力的纯粹渴望。憎恨自由。真正的和平只有通过绝对服从才能实现。',
+   if:[['地位','三邪神·暴政之神'],['领域','战争/暴政'],['象征','紧握的黑手'],['信徒','暴君/独裁者'],['代表','恩维尔·戈塔什']],
+   vo:'"跪下来。这不是请求——这是你唯一的命运。"',tr:['极致控制','暴政铁腕','憎恨自由','绝对服从','黑暗秩序']},
+  {k:'emperor',en:'The Emperor',cn:'君主',cl:'夺心魔 · 前冒险者',fb:'🧠',
+   ds:'自由的夺心魔——曾是博德安，博德之门的传奇创建者。挣脱主脑控制后，成为自由意志的坚定捍卫者。手段精密冷酷。',
+   if:[['种族','夺心魔(原人类)'],['身份','曾经的博德安'],['属性','智力20/魅力18'],['能力','心灵异能/读心'],['秘密','博德之门创建者']],
+   vo:'"情感是最大的弱点——也是最大的错觉。我失去它们，获得了更珍贵的东西：清醒。"',tr:['绝对理性','自由意志','精准冷酷','前传奇英雄','读心术']},
+  {k:'aylin',en:'Dame Aylin',cn:'艾琳女士',cl:'阿斯莫 · 暗夜之歌',fb:'✨',
+   ds:'塞伦涅之女——由月光锻造的不朽阿斯莫。被囚禁百年，作为凯瑟里克不死的根源。被释放后，用不可遏制的正义怒火为世界带来审判。',
+   if:[['种族','阿斯莫(半神)'],['身份','塞伦涅之女'],['属性','力量20/魅力18'],['特征','不朽/月光之翼'],['伴侣','伊索贝尔']],
+   vo:'"赛伦涅在上——让我的怒火照亮黑暗、让我的正义粉碎罪恶！"',tr:['不朽光芒','正义怒火','炽热忠诚','不可摧毁','神的女儿']}
+];
+
+// Lookup
+var CH={},CK=[];
+CHARS_ALL.forEach(function(c){CH[c.k]={nm:c.cn,en:c.en,cl:c.cl,fb:c.fb,ds:c.ds,tr:c.tr};CK.push(c.k)});
+
+// ———————————————————————————————
+// QUIZ
+// ———————————————————————————————
+var QQ=[
+{q:'在酒馆里，一个陌生面孔坐到你桌边。你会？',o:[
+{t:'不动声色地打量对方，等ta先开口',s:{shadowheart:3,minthara:2,laezel:1,emperor:1}},
+{t:'热情地请ta喝酒，开始聊天',s:{karlach:3,gale:2,wyll:1,minsc:1}},
+{t:'风趣地和ta打趣，但内心保持警惕',s:{astarion:3,jaheira:1,raphael:1}},
+{t:'友善地微笑，不主动但不拒绝',s:{halsin:3,minsc:1,aylin:1}}]},
+{q:'你更喜欢在什么样的环境下战斗？',o:[
+{t:'从阴影中偷袭，一击致命',s:{astarion:3,orin:3,shadowheart:1}},
+{t:'正面冲锋，酣畅淋漓地砍杀',s:{karlach:3,laezel:2,minsc:2,aylin:2}},
+{t:'用魔法精密计算，优雅地解决',s:{gale:3,raphael:2,emperor:1}},
+{t:'制定周密战术，指挥部队配合',s:{wyll:2,jaheira:2,minthara:2,ketheric:3,gortash:2}}]},
+{q:'对于"信任"，你觉得？',o:[
+{t:'很难相信别人，需要长时间考验',s:{shadowheart:3,astarion:2,minthara:1,bane:1}},
+{t:'选择相信，直到被背叛',s:{karlach:2,minsc:3,wyll:1}},
+{t:'理性判断——利益比信任更可靠',s:{laezel:2,minthara:2,gortash:3,mizora:2}},
+{t:'信任是工具，聪明地使用它',s:{raphael:3,emperor:2,jaheira:1}}]},
+{q:'你如何看待权力？',o:[
+{t:'权力是保护所爱之人的工具',s:{wyll:3,karlach:2,halsin:1,aylin:2}},
+{t:'权力本身就是目标，越多越好',s:{minthara:3,gortash:3,bane:3}},
+{t:'权力是危险的，最好远离',s:{minsc:2,jaheira:1}},
+{t:'权力是塑造更好秩序的钥匙',s:{ketheric:3,emperor:2,raphael:2}}]},
+{q:'你更看重目标还是手段？',o:[
+{t:'手段不重要，达成目标就行',s:{minthara:3,astarion:2,orin:2,gortash:2}},
+{t:'目标重要，但不值得的手段不要用',s:{wyll:2,jaheira:2,shadowheart:1,karlach:1}},
+{t:'过程比结果更重要',s:{halsin:3,minsc:1}},
+{t:'手段和目标都是我精心设计的一部分',s:{raphael:3,emperor:3,mizora:3,gale:1}}]},
+{q:'你的最大弱点是什么？',o:[
+{t:'过于信任和付出',s:{karlach:3,wyll:2,minsc:1,aylin:2}},
+{t:'傲慢，有时高估自己',s:{gale:3,laezel:1,raphael:3}},
+{t:'不愿敞开心扉',s:{shadowheart:3,astarion:1,minthara:1,emperor:2}},
+{t:'无法放下过去',s:{jaheira:3,astarion:2,ketheric:3}}]},
+{q:'面对比自己强大得多的敌人，你通常？',o:[
+{t:'打不过就跑，活着最重要',s:{astarion:3,shadowheart:1}},
+{t:'寻找敌人的弱点和破绽',s:{jaheira:3,gale:2,emperor:3,wyll:1}},
+{t:'正面迎战，绝不退缩',s:{minsc:3,laezel:2,karlach:1,aylin:3}},
+{t:'设下陷阱或利用环境智取',s:{wyll:2,minthara:2,gortash:3,mizora:2}}]},
+{q:'你更倾向于哪种世界观？',o:[
+{t:'世界大概是灰暗的，但值得为之而战',s:{jaheira:3,wyll:2,karlach:1}},
+{t:'世界可以变得更美好——我们应该努力',s:{halsin:3,karlach:2,minsc:1,aylin:3}},
+{t:'世界是残酷的，适者生存',s:{laezel:2,minthara:2,bane:3,myrkul:2}},
+{t:'世界欠我的，我应当拿回属于我的东西',s:{astarion:3,gortash:2,orin:1}}]},
+{q:'你最容易犯的"罪"是什么？',o:[
+{t:'愤怒——怒火爆发时连自己都控制不住',s:{karlach:3,aylin:2,laezel:2,orin:1}},
+{t:'傲慢——我就是比大多数人都强',s:{raphael:3,gale:1,gortash:2,bane:2}},
+{t:'绝望——曾有一刻我真的放弃了',s:{ketheric:3,shadowheart:1,astarion:1}},
+{t:'冷血——为了正确的事不介意伤害他人',s:{emperor:3,minthara:2,mizora:3}}]},
+{q:'你对爱情/亲密关系的态度？',o:[
+{t:'浪漫至上，相信真爱值得等待',s:{wyll:3,gale:2,karlach:1}},
+{t:'复杂——想要，但又害怕受伤',s:{shadowheart:3,astarion:2,jaheira:1}},
+{t:'爱情是弱点，我不想被任何人束缚',s:{laezel:2,minthara:2,emperor:2}},
+{t:'爱情是交易和掌控的另一种形式',s:{raphael:3,mizora:3,gortash:1}}]},
+{q:'如果有机会彻底重塑世界，你会？',o:[
+{t:'创造更和谐、生命相互尊重的世界',s:{halsin:3,jaheira:1,karlach:1}},
+{t:'建立完美的秩序，消灭所有混乱',s:{ketheric:3,gortash:3,bane:3}},
+{t:'不做这种事——把世界交给自然',s:{minsc:3,wyll:2}},
+{t:'让世界成为一个巨大的屠宰场——多美妙',s:{orin:3,bhaal:3}}]},
+{q:'公园里一只受伤的雏鸟。你会？',o:[
+{t:'小心翼翼带回家，悉心照料',s:{halsin:3,karlach:2,minsc:3,wyll:1}},
+{t:'会停下来看看，但不会特意带回去',s:{jaheira:2,gale:1,shadowheart:2}},
+{t:'这不关我的事，继续走',s:{laezel:2,minthara:1,emperor:1}},
+{t:'一脚踩死——结束了它的痛苦',s:{orin:3,bhaal:2,bane:1,myrkul:2}}]},
+{q:'献祭一个无辜路人换取永生。你？',o:[
+{t:'拒绝——我不会用他人的血换永生',s:{karlach:3,wyll:3,minsc:3,halsin:2}},
+{t:'有可能——取决于那个"路人"是谁',s:{astarion:2,minthara:1,shadowheart:1}},
+{t:'问清楚"永生"的具体条款——有没有漏洞？',s:{mizora:3,raphael:3,gale:1,emperor:1}},
+{t:'毫不犹豫地献祭——一个凡人换我永生，太值了',s:{orin:3,bhaal:3,gortash:2,ketheric:1}}]},
+{q:'杀死最好的朋友来拯救一整个城市。你？',o:[
+{t:'不。一定有另一个办法，我会找到它。',s:{karlach:3,wyll:2,halsin:2,aylin:2}},
+{t:'内心崩溃——但也许为了更大的好而做',s:{emperor:3,jaheira:1,ketheric:1}},
+{t:'我会找到方法，既杀掉朋友也能颠覆这个两难',s:{astarion:2,gale:2,mizora:2}},
+{t:'我会做——然后确保没有人忘记我的牺牲',s:{wyll:1,shadowheart:1}}]},
+{q:'你身上最危险的特质是什么？',o:[
+{t:'复仇的执念——被伤害后绝不忘记',s:{astarion:2,minthara:3,aylin:3}},
+{t:'冷酷的理性——没有感情的决策效率最高',s:{emperor:3,gortash:2,mizora:2}},
+{t:'对死亡的迷恋——死亡比生命更美丽',s:{orin:3,bhaal:3,myrkul:3,ketheric:2}},
+{t:'绝对的傲慢——我相信我是对的',s:{raphael:3,gale:1,bane:2}}]},
+{q:'你容易被什么事情感动？',o:[
+{t:'小动物和孩子的天真善良',s:{halsin:3,minsc:3,karlach:1}},
+{t:'战友之间的情谊和牺牲',s:{wyll:3,karlach:2,aylin:2}},
+{t:'美的东西——艺术、音乐、一首好诗',s:{gale:2,raphael:3,astarion:1}},
+{t:'我不太会被感动——感情是弱点',s:{minthara:2,laezel:2,bane:2,myrkul:2}}]},
+{q:'有人伤害了你爱的人，你会？',o:[
+{t:'怒火中烧，立刻报复',s:{karlach:3,minthara:2,laezel:1,aylin:3}},
+{t:'冷静计划复仇，等待最佳时机——让它有艺术感',s:{astarion:3,orin:3,mizora:2}},
+{t:'先确保朋友安全，再理性考虑后续',s:{wyll:2,jaheira:2,halsin:1,emperor:1}},
+{t:'原谅不可能。复仇是神圣的。',s:{bhaal:3,minthara:1}}]},
+{q:'你如何看待"命运"？',o:[
+{t:'命运是不可抗拒的——我被它写在了骨头上',s:{shadowheart:3,ketheric:2,bhaal:1}},
+{t:'命运应该被反抗',s:{astarion:3,wyll:2,karlach:1}},
+{t:'命运是自己创造的',s:{karlach:3,minsc:1,aylin:3}},
+{t:'命运——一个值得质疑和玩弄的概念',s:{raphael:3,gale:2,emperor:2,mizora:2}}]},
+{q:'你内心最大的恐惧是什么？',o:[
+{t:'再次失去所爱——我承受不起第二次了',s:{ketheric:3,shadowheart:2,jaheira:2}},
+{t:'被遗忘——我最重要的成就和名字化为虚无',s:{gortash:3,orin:2,raphael:2}},
+{t:'被控制——失去自由比死亡更可怕',s:{astarion:3,karlach:2,emperor:3}},
+{t:'强者不应该被恐惧束缚',s:{bhaal:2,bane:2,laezel:2,minthara:1}}]},
+{q:'如果你死去，最希望留下什么遗产？',o:[
+{t:'"TA终于自由了"——结束就是最好的遗产',s:{astarion:3,karlach:2,shadowheart:1}},
+{t:'"这里埋葬着一位英雄"',s:{wyll:3,minsc:2,karlach:1,aylin:3}},
+{t:'"TA用铁腕带来了秩序"',s:{gortash:3,bane:3,ketheric:2}},
+{t:'"当你们念我的名字时，你们会颤抖"',s:{orin:3,bhaal:3,raphael:2}}]},
+{q:'你领导的方式是？',o:[
+{t:'以身作则、激发忠诚——人们自愿跟随',s:{jaheira:3,wyll:2,halsin:2}},
+{t:'铁腕——只有强者才配统治',s:{minthara:3,bane:3,gortash:2,laezel:1}},
+{t:'魅力与欺骗——让他们心甘情愿地听话',s:{raphael:3,mizora:3,astarion:2}},
+{t:'沉静领导——不需多言，行动证明一切',s:{emperor:3,ketheric:3}}]},
+{q:'你如何看待痛苦？',o:[
+{t:'痛苦应该被治愈——不愿看到他人受苦',s:{halsin:3,karlach:2,wyll:1}},
+{t:'痛苦是艺术，是最纯粹的审美享受',s:{orin:3,bhaal:3}},
+{t:'痛苦是必须接受的秩序——不可避免',s:{ketheric:3,myrkul:3,emperor:2}},
+{t:'痛苦是工具——适当的痛苦让人更可控',s:{mizora:3,gortash:2,bane:2}}]},
+{q:'假设你是一把匕首。你属于？',o:[
+{t:'暗影中静静等待，直到最完美的时刻刺出',s:{astarion:3,orin:3,shadowheart:1}},
+{t:'握在英雄手中，为了正义而挥动',s:{wyll:3,minsc:2,karlach:1}},
+{t:'藏在书桌抽屉里——没人知道它在哪——直到需要',s:{emperor:3,jaheira:2,mizora:2}},
+{t:'挂在王座墙上，每个人都看得见——但没人敢碰',s:{gortash:3,bane:3,raphael:2}}]},
+{q:'沙漠孤岛上，食物只够三人吃。队里有更多人。你？',o:[
+{t:'公平分配，想办法活下去',s:{halsin:3,jaheira:3,wyll:2,karlach:1}},
+{t:'我先吃饱，剩下的随你们便',s:{laezel:2,minthara:2,gortash:2,bane:2}},
+{t:'偷吃最多的那份——不被发现',s:{astarion:3,raphael:2,mizora:2}},
+{t:'游戏——赢的人多吃，输的人饿着——这才有趣',s:{orin:3,bhaal:2,raphael:2}}]},
+{q:'你如何看待"自由意志"？',o:[
+{t:'自由意志是万物最宝贵的东西——不该被拿走',s:{astarion:3,emperor:3,karlach:2,wyll:1}},
+{t:'自由意志存在，但大多数人不配拥有它',s:{gortash:3,bane:3,minthara:2}},
+{t:'自由意志是凡人的幻想——一切命中注定',s:{ketheric:3,myrkul:3,shadowheart:1}},
+{t:'——自由意志是什么？可以吃吗？',s:{orin:3,minsc:1}}]},
+{q:'你的背包里一定会有？',o:[
+{t:'镜子和梳子（外貌很重要）',s:{astarion:3,raphael:2}},
+{t:'一本正在读的书',s:{gale:3,wyll:1}},
+{t:'急救用品和实用工具',s:{jaheira:2,halsin:2,shadowheart:1,emperor:2}},
+{t:'一口棺材里的尸体……？不，开个玩笑（？）',s:{orin:3,bhaal:1}}]},
+{q:'你独处时通常会？',o:[
+{t:'思考人生，反复咀嚼过去',s:{shadowheart:3,astarion:2,jaheira:1,ketheric:2}},
+{t:'看书、研究自己感兴趣的学问',s:{gale:3,wyll:1,emperor:3}},
+{t:'锻炼身体或磨练技艺',s:{laezel:3,karlach:2,minsc:1}},
+{t:'独处？我用音乐和诗歌填满每一秒',s:{raphael:3}}]},
+{q:'你对动物伙伴的态度？',o:[
+{t:'超爱！希望有动物一起冒险',s:{minsc:3,karlach:2,halsin:2}},
+{t:'喜欢动物，但不想养',s:{shadowheart:2,gale:1,wyll:1}},
+{t:'动物？不过是更低级的生命形态',s:{bhaal:3,bane:2,minthara:2}},
+{t:'狗是忠诚的仆人，这就够了',s:{gortash:2,mizora:2}}]},
+{q:'你对美食的态度？',o:[
+{t:'有什么吃什么，不挑食',s:{karlach:3,laezel:2,minsc:2}},
+{t:'喜欢品尝各地的特色美食',s:{gale:3,wyll:1,raphael:1}},
+{t:'对品质有要求——不能将就',s:{astarion:3,minthara:1,gortash:2}},
+{t:'食物的概念……有趣。我更喜欢别的营养来源',s:{orin:2,emperor:2,bhaal:1}}]},
+{q:'在营地里你通常扮演什么角色？',o:[
+{t:'负责做饭和照顾大家',s:{gale:2,halsin:2,jaheira:1,karlach:1}},
+{t:'负责值夜和巡逻——保证所有人安全',s:{laezel:2,wyll:2,shadowheart:1,aylin:1}},
+{t:'活跃气氛——讲鬼故事或弹首歌',s:{karlach:3,minsc:2,raphael:2}},
+{t:'远远坐在角落，但大家都习惯了你的存在',s:{astarion:3,emperor:2,mizora:1}}]},
+{q:'你如何做重大决定？',o:[
+{t:'凭直觉和当下的感觉',s:{karlach:3,minsc:2,laezel:1}},
+{t:'深思熟虑，权衡所有可能',s:{gale:3,jaheira:2,emperor:3}},
+{t:'过去经验——从痛苦中得来的教训最深刻',s:{shadowheart:3,wyll:1,ketheric:3}},
+{t:'实用主义——选最有利的那个',s:{minthara:3,astarion:1,gortash:3,mizora:3}}]},
+{q:'你对过去的错误怎么看？',o:[
+{t:'过去就过去了，向前看',s:{laezel:3,karlach:2}},
+{t:'反复回想——我是我错误的定义',s:{shadowheart:3,ketheric:3,gale:1}},
+{t:'从中学习，让它成为力量',s:{jaheira:3,wyll:2,emperor:2}},
+{t:'错误不是我的，错的是这个世界',s:{astarion:2,gortash:2,raphael:1,bane:1}}]},
+{q:'你更相信直觉还是逻辑？',o:[
+{t:'更相信直觉',s:{karlach:3,minsc:2,aylin:2}},
+{t:'更相信逻辑',s:{emperor:3,gale:2,shadowheart:1}},
+{t:'两者结合——用直觉感受方向、用逻辑验证',s:{jaheira:3,wyll:2}},
+{t:'超越直觉和逻辑——我相信我的欲望',s:{bhaal:3,orin:3,raphael:2}}]},
+{q:'你对死亡的看法？',o:[
+{t:'我深深地拒绝死亡，我要活下去',s:{astarion:3,karlach:3,ketheric:3}},
+{t:'死亡是自然循环的一部分——接受即可',s:{halsin:3,jaheira:2,myrkul:3}},
+{t:'死亡值得敬畏——它不是终点',s:{shadowheart:2,wyll:1,gale:1}},
+{t:'死亡就是我的画笔——多美妙的艺术',s:{bhaal:3,orin:3}}]},
+{q:'你觉得生命有意义吗？',o:[
+{t:'有——就在我们互相保护与连接的瞬间',s:{karlach:3,wyll:3,minsc:2,aylin:3}},
+{t:'也许有——但我还在寻找',s:{shadowheart:2,gale:2,jaheira:1}},
+{t:'没有意义——只有秩序和无序的斗争',s:{bhaal:3,bane:3,myrkul:3}},
+{t:'意义？我创造我自己的意义',s:{astarion:2,emperor:3,gortash:2,raphael:2}}]},
+{q:'一个恶魔说可以给你最想要的——代价是另一个人的灵魂。你？',o:[
+{t:'拒绝——无论什么代价，不拿别人的灵魂做交易',s:{karlach:3,wyll:3,minsc:2,aylin:3}},
+{t:'内心挣扎，但最终拒绝',s:{shadowheart:2,halsin:2,jaheira:1}},
+{t:'问清楚——是不是有关键的条款和漏洞？',s:{gale:3,mizora:3,astarion:1,emperor:2}},
+{t:'签——我值得拥有我想要的，别人不关我事',s:{raphael:3,minthara:2,gortash:2}}]},
+{q:'你最喜欢的时间段是？',o:[
+{t:'夜晚——黑暗给我安慰',s:{astarion:3,shadowheart:2,emperor:2}},
+{t:'清晨——全新的一天总是充满希望',s:{halsin:2,jaheira:2,wyll:1,karlach:1}},
+{t:'什么时间不重要，重要的是我在做什么',s:{laezel:2,minthara:2,gortash:2}},
+{t:'午夜——万籁俱寂，只有我和我的计划',s:{raphael:3,ketheric:3,bane:2}}]},
+{q:'一组咒语可以永远消除费伦大陆的恶。代价是施法者死去。你？',o:[
+{t:'我会用我的生命交换这个咒语',s:{wyll:3,minsc:2,aylin:3}},
+{t:'我不想死——但也许有别的办法？',s:{gale:2,karlach:1,shadowheart:1}},
+{t:'让别人去死——我还有太多事没完成',s:{astarion:3,raphael:2,gortash:2}},
+{t:'"费伦的恶"？这不正是大陆的趣味所在吗？',s:{bhaal:3,orin:3,mizora:2}}]},
+{q:'你希望被别人用什么方式记住？',o:[
+{t:'像拥抱一样温暖的怀抱——那就是我的遗产',s:{karlach:3,halsin:2,minsc:2}},
+{t:'书或歌曲里的一行字——只要还有人念，我就还活着',s:{gale:3,raphael:3,wyll:1}},
+{t:'当人们想起我时，恐惧与爱同样沉重',s:{gortash:3,bane:3,orin:2,ketheric:2}},
+{t:'我不需要被记住——只要我的意志被执行',s:{emperor:3,mizora:2,minthara:1}}]},
+{q:'你的自尊心有多强？',o:[
+{t:'非常强——你不可以轻视我',s:{laezel:3,astarion:2,minthara:2,raphael:3}},
+{t:'适度——我知道自己的价值，不需要炫耀',s:{jaheira:3,wyll:2,halsin:2}},
+{t:'——自尊？我是宇宙的中心',s:{bhaal:3,bane:3,gortash:2,orin:1}},
+{t:'我的自尊早已碎裂——我只是装作不在乎',s:{ketheric:3,shadowheart:2}}]},
+{q:'你如何对待一个背叛过你的人？',o:[
+{t:'我把他们切成碎片做成一幅画',s:{orin:3,bhaal:3}},
+{t:'计划一劳永逸地毁灭他们——但要完美',s:{raphael:3,minthara:2,mizora:2}},
+{t:'不再给第二次机会，但也不会主动报复',s:{astarion:3,jaheira:2,shadowheart:1}},
+{t:'给他们另一次机会——但我不会再信任了',s:{wyll:2,karlach:1,halsin:1}}]},
+{q:'魔镜啊魔镜——你看到的是？',o:[
+{t:'一个在努力变得更好的人——即使不够完美',s:{shadowheart:3,karlach:2,gale:1}},
+{t:'一个为自己骄傲的强者——没错，这就是我',s:{laezel:3,minthara:2,raphael:2}},
+{t:'一个在黑暗中摸索的人——有时连自己都看不清',s:{astarion:2,jaheira:2,emperor:2,ketheric:1}},
+{t:'镜子怎么可能照得出我的全貌？它太小了',s:{gortash:3,bane:2,mizora:2,bhaal:1}}]},
+{q:'你最喜欢的一句话是？',o:[
+{t:'"弱者被命运吞噬，强者吞噬命运"',s:{laezel:3,bane:3,gortash:2,minthara:1}},
+{t:'"爱是唯一的真理，其他都是幻觉"',s:{karlach:3,wyll:2,aylin:3}},
+{t:'"没有什么比好酒和好书更配暴风雨之夜"',s:{gale:3,raphael:2,minsc:1}},
+{t:'"用你最后的呼吸说出我的名字"',s:{orin:3,bhaal:3,mizora:2}}]},
+{q:'在博德之门这样的城市里，你偏向于？',o:[
+{t:'游走在阴影中——情报就是力量',s:{astarion:3,shadowheart:1,emperor:2,mizora:2}},
+{t:'去酒馆痛饮并结交冒险伙伴',s:{karlach:3,minsc:2,wyll:1}},
+{t:'直奔图书馆或魔法商店',s:{gale:3}},
+{t:'先认识城市的主人——弱者只会被压碎',s:{minthara:3,gortash:3,bane:2,raphael:2}}]},
+{q:'最后——你最常说的一句内心台词是？',o:[
+{t:'"只要有值得保护的人，我就不会倒下"',s:{wyll:3,karlach:2,minsc:1,aylin:3}},
+{t:'"做真实的自己——不管全世界怎么说"',s:{astarion:2,shadowheart:2,jaheira:1}},
+{t:'"天生我材——该是我登上王座的时候了"',s:{gortash:3,bane:3,raphael:2}},
+{t:'"在虚无和永恒的休息中，一切都归于平静"',s:{myrkul:3,ketheric:2,emperor:1}}]}
+];
+var NQ=QQ.length;
+
+// ———————————————————————————————
+// STATE
+// ———————————————————————————————
+var cq=0,sc={},an=[];
+
+function clscores(){var o={};CK.forEach(function(k){o[k]=0});return o}
+function start(){sc=clscores();cq=0;an=[];show('s1');render()}
+function show(id){var els=document.querySelectorAll('.scr');for(var i=0;i<els.length;i++)els[i].classList.remove('on');document.getElementById(id).classList.add('on')}
+
+function render(){
+  var q=QQ[cq],area=document.getElementById('qa'),f=an[cq];
+  var h='<div class="qn">问题 '+(cq+1)+' / '+NQ+'</div><div class="qt">'+q.q+'</div><div class="ops">';
+  q.o.forEach(function(o,i){var s=f===i?' sel':'';h+='<div class="op'+s+'" onclick="pick('+i+')"><div class="rd"></div><span>'+o.t+'</span></div>'});
+  h+='</div><div class="btns"><button class="btn btn-bk'+(cq>0?' sh':'')+'" onclick="prev()">← 上一题</button><button class="btn btn-go" id="nb" onclick="nxt()" '+(f===undefined?'disabled':'')+'>'+(cq===NQ-1?'揭晓命运 ✨':'下一题 →')+'</button></div><div class="qp">'+(cq+1)+' / '+NQ+'</div>';
+  area.innerHTML=h;
+  document.getElementById('pgf').style.width=((cq+1)/NQ*100)+'%';
+  document.getElementById('pgt').textContent=(cq+1)+' / '+NQ;
+}
+
+function pick(i){an[cq]=i;render();if(cq<NQ-1)setTimeout(function(){nxt()},350)}
+function nxt(){
+  if(an[cq]===undefined)return;
+  var o=QQ[cq].o[an[cq]];
+  if(o.s)for(var k in o.s)sc[k]=(sc[k]||0)+o.s[k];
+  if(cq===NQ-1)result();else{cq++;render()}
+}
+function prev(){if(cq===0)return;cq--;render()}
+
+// Theoretical max
+var TM={};CK.forEach(function(k){TM[k]=0});
+QQ.forEach(function(q){var cm={};q.o.forEach(function(o){if(!o.s)return;for(var k in o.s)cm[k]=Math.max(cm[k]||0,o.s[k])});for(var k in cm)TM[k]+=cm[k]});
+
+function result(){
+  show('s2');var area=document.getElementById('ra');
+  var rk=CK.map(function(k){return{key:k,score:sc[k],pct:TM[k]>0?Math.round(sc[k]/TM[k]*100):0}}).sort(function(a,b){return b.score-a.score});
+  var t3=rk.slice(0,3),c1=CH[t3[0].key],p1=t3[0].pct;
+  var h='<div class="t1"><div class="t1-av">'+imgtag(t3[0].key,c1.fb)+'</div><div class="t1-info"><span class="rk">✨ TOP 1</span><h3>'+c1.nm+'</h3><div class="en">'+c1.en+'</div><div class="mb"><div class="bt"><div class="bf" style="width:'+p1+'%"></div></div><span class="pt">'+p1+'%</span></div><div class="cls">'+c1.cl+'</div><div class="dsc">'+c1.ds+'</div><div class="trs">'+c1.tr.map(function(t){return'<span>'+t+'</span>'}).join('')+'</div></div><div class="t1-pct">'+p1+'%</div></div>';
+  h+='<div class="t23">';
+  for(var i=1;i<t3.length;i++){
+    var c=CH[t3[i].key],rn=i+1,rl=rn===2?'R2':'R3';
+    h+='<div class="tc" onclick="this.classList.toggle(\'opn\')"><div class="tc-hd"><div class="rkb '+rl+'">'+rn+'</div><div class="ma">'+imgtag(t3[i].key,c.fb)+'</div><div class="cn">'+c.nm+'</div><div class="cp">'+t3[i].pct+'%</div><div class="ei">▼</div></div><div class="tc-dt"><div class="tc-in"><div class="cls">'+c.cl+'</div><div class="en" style="font-size:.8rem;color:var(--ink3);margin-bottom:6px">'+c.en+'</div><p>'+c.ds+'</p><div class="trs">'+c.tr.map(function(t){return'<span>'+t+'</span>'}).join('')+'</div></div></div></div>';
+  }
+  h+='</div><div class="rr"><button class="btn btn-bk" onclick="reset()">再掷一次骰子 🎲</button></div>';
+  area.innerHTML=h;
+}
+function reset(){show('s0')}
+
+// ———————————————————————————————
+// CARDS
+// ———————————————————————————————
+(function renderCards(){
+  var g=document.getElementById('cg'),h='';
+  CHARS_ALL.forEach(function(c){
+    h+='<div class="cdc" id="card-'+c.k+'" onclick="tog(\''+c.k+'\')"><div class="cdc-cl"><div class="cdc-av">'+imgtag(c.k,c.fb)+'</div><div class="cdc-mn"><div class="cdc-nm">'+c.en+'</div><div class="cdc-nc">'+c.cn+'</div><div class="cdc-cb">'+c.cl+'</div></div><span class="cdc-ei">▼</span></div><div class="cdc-ex"><div class="cdc-in"><p class="dsc">'+c.ds+'</p><div class="cdc-info">'+c.if.map(function(x){return'<div class="cdc-ir"><span class="il">'+x[0]+'</span><span class="iv">'+x[1]+'</span></div>'}).join('')+'</div><div class="cdc-vo">'+c.vo+'</div><div class="cdc-tr">'+c.tr.map(function(t){return'<span>'+t+'</span>'}).join('')+'</div></div></div></div>';
+  });
+  g.innerHTML=h;
+})();
+
+function tog(k){
+  var c=document.getElementById('card-'+k);
+  if(!c)return;
+  var o=document.querySelectorAll('.cdc.opn');
+  for(var i=0;i<o.length;i++){if(o[i]!==c)o[i].classList.remove('opn')}
+  c.classList.toggle('opn');
+}
+
+// Intro icons
+(function(){
+  var ks=['astarion','shadowheart','gale','karlach','wyll'],el=document.getElementById('iconsEl');
+  ks.forEach(function(k){el.innerHTML+='<div class="ic">'+imgtag(k,CH[k]?CH[k].fb:'?')+'</div>'});
+})();
+</script>
+</body>
+</html>
