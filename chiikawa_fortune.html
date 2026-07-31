@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ちいかわ · 每日运势占卜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink: oklch(72% 0.18 355);
+  --pink-light: oklch(88% 0.08 355);
+  --pink-pale: oklch(95% 0.04 355);
+  --cream: oklch(97% 0.015 85);
+  --cream-2: oklch(93% 0.02 85);
+  --cream-3: oklch(88% 0.025 85);
+  --gold: oklch(82% 0.16 90);
+  --gold-dark: oklch(65% 0.14 85);
+  --red: oklch(62% 0.22 25);
+  --ink: oklch(22% 0.012 50);
+  --ink-light: oklch(40% 0.01 50);
+  --ink-lighter: oklch(55% 0.008 50);
+  --radius: 20px;
+  --radius-sm: 14px;
+  --radius-pill: 999px;
+  --shadow: 0 4px 20px oklch(22% 0.012 50 / 0.06);
+  --shadow-lg: 0 12px 40px oklch(22% 0.012 50 / 0.12);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: clip; scroll-behavior: smooth; }
+body {
+  overflow-x: clip;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--cream);
+  min-height: 100dvh;
+}
+body::before {
+  content: ""; position: fixed; top: -200px; right: -150px; width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(95% 0.04 355 / 0.5), transparent);
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: ""; position: fixed; bottom: -120px; left: -100px; width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(94% 0.06 90 / 0.35), transparent);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── Header ── */
+header {
+  position: relative; z-index: 10;
+  padding: 14px 24px; max-width: 820px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.wordmark {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem;
+  color: var(--ink); letter-spacing: -0.03em; text-decoration: none;
+}
+.wordmark span { color: var(--pink); }
+header nav { display: flex; gap: 12px; align-items: center; }
+header nav a {
+  font-size: 0.85rem; font-weight: 500; color: var(--ink-light); text-decoration: none;
+  padding: 6px 12px; border-radius: var(--radius-pill);
+  transition: all 0.2s ease;
+}
+header nav a:hover { color: var(--pink); background: var(--pink-pale); }
+
+/* ── Main ── */
+main {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 20px 24px 50px;
+}
+
+/* ── Omikuji Container ── */
+.omikuji-container {
+  width: 100%; max-width: 560px;
+  background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  padding: 32px 28px 28px; text-align: center;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative; overflow: hidden;
+}
+
+/* ── Screen management ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── INTRO SCREEN ── */
+.omikuji-intro { padding: 10px 0 0; }
+.omikuji-intro .intro-icon {
+  font-size: 3.5rem; margin-bottom: 10px;
+  animation: float 3s ease-in-out infinite;
+}
+.omikuji-intro h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
+  font-size: 1.7rem; letter-spacing: -0.03em; margin-bottom: 6px;
+}
+.omikuji-intro h1 span { color: var(--pink); }
+.omikuji-intro .sub {
+  font-size: 0.9rem; color: var(--ink-light); margin-bottom: 6px; line-height: 1.7;
+}
+.omikuji-intro .sub2 {
+  font-size: 0.8rem; color: var(--ink-lighter); margin-bottom: 22px;
+}
+.omikuji-intro .date-display {
+  font-family: 'Noto Serif JP', 'Plus Jakarta Sans', serif;
+  font-size: 0.85rem; color: var(--ink-lighter); margin-bottom: 16px;
+}
+
+.btn {
+  padding: 14px 40px; border-radius: var(--radius-pill);
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+  font-size: 1rem; border: none; cursor: pointer;
+  transition: all 0.2s ease; text-decoration: none; display: inline-block;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--pink), oklch(68% 0.2 20));
+  color: white; box-shadow: 0 4px 16px oklch(72% 0.18 355 / 0.35);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px oklch(72% 0.18 355 / 0.45); }
+.btn-primary:active { transform: translateY(0); }
+.btn-secondary { background: var(--cream-2); color: var(--ink-light); }
+.btn-secondary:hover { background: var(--cream-3); }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ── DRAW SCREEN ── */
+#screen-draw { padding: 10px 0 0; }
+.draw-prompt {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+  font-size: 1.15rem; margin-bottom: 20px; color: var(--ink);
+}
+.draw-stage {
+  width: 140px; height: 140px; border-radius: 50%; overflow: hidden;
+  margin: 0 auto 12px;
+  background: var(--cream-2);
+  box-shadow: 0 4px 20px oklch(22% 0.012 50 / 0.08);
+  position: relative;
+}
+.draw-stage img {
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transform: scale(0.5);
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.draw-stage img.revealed {
+  opacity: 1; transform: scale(1);
+}
+.draw-hint {
+  font-size: 0.82rem; color: var(--ink-lighter); margin-top: 4px;
+}
+.draw-shake {
+  animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10% { transform: translateX(-8px) rotate(-3deg); }
+  20% { transform: translateX(8px) rotate(3deg); }
+  30% { transform: translateX(-10px) rotate(-2deg); }
+  40% { transform: translateX(10px) rotate(2deg); }
+  50% { transform: translateX(-6px) rotate(-1deg); }
+  60% { transform: translateX(6px) rotate(1deg); }
+  70% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+  90% { transform: translateX(-2px); }
+}
+
+/* ── RESULT SCREEN ── */
+#screen-result { padding: 0; }
+.result-char {
+  width: 120px; height: 120px; border-radius: 50%; overflow: hidden;
+  margin: 0 auto 10px;
+  background: var(--cream-2);
+  box-shadow: 0 6px 24px oklch(22% 0.012 50 / 0.12);
+  animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.result-char img { width: 100%; height: 100%; object-fit: cover; }
+@keyframes popIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-char-name {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+  font-size: 1rem; margin-bottom: 8px; color: var(--ink);
+}
+
+/* ── Fortune Badge ── */
+.fortune-badge {
+  display: inline-block;
+  padding: 16px 40px; border-radius: var(--radius-pill);
+  font-family: 'Noto Serif JP', 'Plus Jakarta Sans', serif;
+  font-weight: 700; font-size: 2rem;
+  letter-spacing: 0.08em; margin-bottom: 6px;
+  animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
+}
+@keyframes badgePop {
+  0% { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.fortune-badge.daikichi { background: oklch(95% 0.06 85); color: var(--red); box-shadow: 0 4px 16px oklch(82% 0.16 90 / 0.5); }
+.fortune-badge.chukichi { background: oklch(95% 0.04 85); color: oklch(55% 0.14 70); box-shadow: 0 4px 12px oklch(80% 0.14 90 / 0.3); }
+.fortune-badge.shokichi { background: oklch(94% 0.04 200 / 0.4); color: oklch(55% 0.14 240); box-shadow: 0 4px 12px oklch(72% 0.12 240 / 0.25); }
+.fortune-badge.kichi   { background: oklch(94% 0.04 150 / 0.4); color: oklch(50% 0.12 160); box-shadow: 0 4px 12px oklch(70% 0.12 160 / 0.25); }
+.fortune-badge.suekichi{ background: oklch(94% 0.02 50 / 0.3); color: oklch(45% 0.05 70); box-shadow: 0 4px 10px oklch(60% 0.03 70 / 0.2); }
+
+.fortune-message {
+  font-size: 0.85rem; color: var(--ink-lighter); margin-bottom: 18px;
+}
+
+/* ── Detail Cards ── */
+.fortune-details {
+  display: flex; flex-direction: column; gap: 8px; text-align: left;
+  margin-bottom: 22px;
+}
+.fortune-detail-row {
+  display: flex; gap: 12px; align-items: baseline;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  background: var(--cream); transition: background 0.2s ease;
+}
+.fortune-detail-row .fd-icon {
+  font-size: 1.1rem; flex-shrink: 0; width: 24px; text-align: center;
+}
+.fortune-detail-row .fd-label {
+  font-size: 0.8rem; font-weight: 700; color: var(--ink);
+  white-space: nowrap; min-width: 52px;
+}
+.fortune-detail-row .fd-value {
+  font-size: 0.82rem; color: var(--ink-light); line-height: 1.6;
+}
+
+/* lucky extras bar */
+.lucky-extras {
+  display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  margin-bottom: 22px;
+}
+.lucky-extra {
+  padding: 8px 16px; border-radius: var(--radius-pill);
+  font-size: 0.82rem; font-weight: 600; text-align: center;
+}
+.lucky-extra.item { background: oklch(94% 0.04 355 / 0.5); color: var(--pink); }
+.lucky-extra.color { background: oklch(94% 0.06 260 / 0.3); color: oklch(50% 0.12 250); }
+.lucky-extra.number { background: oklch(94% 0.06 140 / 0.3); color: oklch(50% 0.12 150); }
+.lucky-extra.direction { background: oklch(94% 0.05 60 / 0.3); color: oklch(55% 0.12 70); }
+
+/* ── Redraw button ── */
+.redraw-row { margin-top: 2px; }
+
+/* ── Bottom note ── */
+.omikuji-note {
+  text-align: center; margin-top: 20px;
+  font-size: 0.75rem; color: var(--ink-lighter); max-width: 560px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  header { padding: 10px 16px; }
+  .wordmark { font-size: 1.05rem; }
+  header nav { gap: 6px; }
+  header nav a { font-size: 0.78rem; padding: 5px 10px; }
+  main { padding: 14px 12px 36px; }
+  .omikuji-container { padding: 24px 18px 22px; border-radius: var(--radius-sm); }
+  .omikuji-intro h1 { font-size: 1.4rem; }
+  .draw-stage { width: 120px; height: 120px; }
+  .fortune-badge { font-size: 1.7rem; padding: 14px 32px; }
+  .result-char { width: 100px; height: 100px; }
+}
+@media (max-width: 480px) {
+  header { padding: 8px 10px; }
+  .wordmark { font-size: 0.95rem; }
+  header nav a { font-size: 0.72rem; padding: 4px 8px; }
+  main { padding: 10px 8px 28px; }
+  .omikuji-container { padding: 20px 14px 18px; }
+  .omikuji-intro h1 { font-size: 1.2rem; }
+  .omikuji-intro .sub { font-size: 0.82rem; }
+  .draw-stage { width: 100px; height: 100px; }
+  .fortune-badge { font-size: 1.4rem; padding: 12px 28px; }
+  .result-char { width: 86px; height: 86px; }
+  .fortune-detail-row { padding: 8px 10px; gap: 8px; }
+  .fortune-detail-row .fd-label { font-size: 0.75rem; min-width: 44px; }
+  .fortune-detail-row .fd-value { font-size: 0.78rem; }
+  .lucky-extra { padding: 6px 12px; font-size: 0.78rem; }
+}
+@media ( prefers-reduced-motion: reduce ) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="chiikawa_qize.html" class="wordmark">ちいかわ<span>.</span></a>
+  <nav>
+    <a href="chiikawa_qize.html">🧪 性格测试</a>
+    <a href="chiikawa_role.html">🐾 角色图鉴</a>
+  </nav>
+</header>
+
+<main>
+<div class="omikuji-container" id="omikujiContainer">
+
+  <!-- ═══ INTRO ═══ -->
+  <div class="screen active" id="screen-intro">
+    <div class="omikuji-intro">
+      <div class="intro-icon">⛩️</div>
+      <h1>ちいかわ <span>每日运势</span></h1>
+      <p class="sub">让 Chiikawa 小可爱们为你占卜今天的运势 ✨<br>没有坏签，最差也是末吉喔～</p>
+      <div class="date-display" id="dateDisplay"></div>
+      <button class="btn btn-primary" onclick="startDraw()">🎋 抽取今日运势</button>
+    </div>
+  </div>
+
+  <!-- ═══ DRAWING ANIMATION ═══ -->
+  <div class="screen" id="screen-draw">
+    <p class="draw-prompt" id="drawPrompt">正在感应你的运势…</p>
+    <div class="draw-stage" id="drawStage">
+      <img id="drawImg" src="" alt="">
+    </div>
+    <p class="draw-hint" id="drawHint"></p>
+  </div>
+
+  <!-- ═══ RESULT ═══ -->
+  <div class="screen" id="screen-result">
+    <div id="resultContent"></div>
+  </div>
+
+</div>
+<p class="omikuji-note">⛩️ 运势仅供参考 · 每天都是美好的一天 · ちいかわ © nagano</p>
+</main>
+
+<script>
+// ═══════════════════════════════
+//  CHARACTER POOL
+// ═══════════════════════════════
+const CHARACTERS = [
+  { name:'吉伊卡哇', jp:'ちいかわ', img:'https://static.wikia.nocookie.net/chiikawa/images/2/2c/AdorableCutieChiikawa.png' },
+  { name:'小八',       jp:'ハチワレ', img:'https://static.wikia.nocookie.net/chiikawa/images/6/61/SweetBabyHachiware2.png' },
+  { name:'乌萨奇',     jp:'うさぎ',   img:'https://static.wikia.nocookie.net/chiikawa/images/4/43/YahaUsagi.png' },
+  { name:'小桃',       jp:'モモンガ', img:'https://static.wikia.nocookie.net/chiikawa/images/a/a0/Momonga.png' },
+  { name:'栗子馒头',   jp:'くりまんじゅう', img:'https://static.wikia.nocookie.net/chiikawa/images/9/93/TastyKurimanju.png' },
+  { name:'海獺勇者',   jp:'ラッコ',   img:'https://static.wikia.nocookie.net/chiikawa/images/6/63/FightOnRakko.png' },
+  { name:'狮萨',       jp:'シーサー', img:'https://static.wikia.nocookie.net/chiikawa/images/1/12/RamenPleaseShisa.png' },
+  { name:'古本',       jp:'カニ',     img:'https://static.wikia.nocookie.net/chiikawa/images/7/76/Kani-removebg-preview_%281%29.png' },
+  { name:'手工铠甲',   jp:'手作り鎧', img:'https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png' },
+  { name:'那孩子',     jp:'あのこ',   img:'https://static.wikia.nocookie.net/chiikawa/images/b/ba/Anoko1.png' },
+];
+
+// ═══════════════════════════════
+//  FORTUNE POOL  (no bad fortunes)
+// ═══════════════════════════════
+const FORTUNE_WEIGHTS = [
+  { level:'大吉', key:'daikichi',  weight:12, star:'⭐⭐⭐⭐⭐' },
+  { level:'中吉', key:'chukichi',  weight:22, star:'⭐⭐⭐⭐' },
+  { level:'小吉', key:'shokichi',  weight:28, star:'⭐⭐⭐' },
+  { level:'吉',   key:'kichi',     weight:25, star:'⭐⭐' },
+  { level:'末吉', key:'suekichi',  weight:13, star:'⭐' },
+];
+
+// Messages per fortune level
+const FORTUNE_MSGS = {
+  daikichi: [
+    '今天是属于你的闪耀之日！做什么都会顺利，连路边的自动贩卖机都会多找你钱。',
+    '运势如虹！无论是考试、工作还是恋爱，今天都是绝佳时机。大胆行动吧！',
+    '超级幸运日！你的笑容会感染身边的每个人，好运也会像涟漪一样扩散出去。',
+  ],
+  chukichi: [
+    '相当不错的一天！虽然不会中彩票，但想做的事情大概率都能成功。',
+    '今天的你散发着温暖的光芒，朋友会不经意间给你带来好消息。',
+    '稳中向好的一天！适合完成之前拖延的小目标，会有意想不到的成就感。',
+  ],
+  shokichi: [
+    '平凡中藏着惊喜！今天可能会在转角遇到喜欢的零食、或收到一句暖心的话。',
+    '整体平稳，但下午会比上午更顺利。适合约朋友喝杯奶茶聊聊天。',
+    '虽然没有惊天动地的好事，但今天的你会感到格外安心和舒适。',
+  ],
+  kichi: [
+    '吉利的普通一天！保持平常心，好事会悄悄发生在不经意的地方。',
+    '今天适合做一些一直想做但没时间的小事——比如整理房间、看一集动画，都能带来满足感。',
+    '运气尚可！只要不急不躁，今天的一切都会按部就班地往好的方向发展。',
+  ],
+  suekichi: [
+    '虽然是末吉，但"末"意味着触底反弹！今天最适合养精蓄锐，明天一定会更好。',
+    '小小提醒：今天走路小心台阶、记得带伞。但这些小波折回头来看都是可爱的回忆。',
+    '末吉也是吉！今天的你可能会觉得有点困，但一杯热饮和一集 Chiikawa 就能满血复活。',
+  ],
+};
+
+// Detail templates per level
+function makeDetails(levelKey) {
+  const base = {
+    daikichi: {
+      love:'主动出击成功率极高！暗恋对象可能也在想你 💕',
+      work:'灵感迸发，效率爆表。大胆提出你的想法吧 ✨',
+      health:'精力充沛，适合户外运动或散个长步 🏃',
+      luckyItem:'彩虹色的小物件 🌈',
+      luckyColor:'樱桃粉',
+      luckyNumber:'7',
+      direction:'南',
+    },
+    chukichi: {
+      love:'微笑是最好的武器，今天多说"谢谢"会加分 💝',
+      work:'按计划推进即可，团队的默契会让你省心不少',
+      health:'状态良好，注意多喝温水 ☕',
+      luckyItem:'一个温暖的拥抱 🤗',
+      luckyColor:'奶油黄',
+      luckyNumber:'3',
+      direction:'东',
+    },
+    shokichi: {
+      love:'今天适合和老朋友聊聊，也许会有不一样的发现',
+      work:'下午效率更高，上午不妨先理清思路 📋',
+      health:'久坐记得起来拉伸一下哦 🧘',
+      luckyItem:'口袋里的小糖果 🍬',
+      luckyColor:'浅蓝色',
+      luckyNumber:'5',
+      direction:'东南',
+    },
+    kichi: {
+      love:'顺其自然就好，越想抓住越容易溜走',
+      work:'稳扎稳打的一天，完成比完美更重要 ✅',
+      health:'保持规律作息，早点睡觉有好事发生 😴',
+      luckyItem:'手边的笔记本 📓',
+      luckyColor:'薄荷绿',
+      luckyNumber:'2',
+      direction:'西',
+    },
+    suekichi: {
+      love:'今天保持真诚就好，你的真实比任何技巧都打动人',
+      work:'来个小改动吧——换个桌面壁纸也能转换心情 🎨',
+      health:'放松第一，泡个热水澡或看一集动画充电 🛀',
+      luckyItem:'一杯热可可 ☕',
+      luckyColor:'温暖橙',
+      luckyNumber:'9',
+      direction:'北',
+    },
+  };
+  return base[levelKey] || base.kichi;
+}
+
+// ═══════════════════════════════
+//  SCREEN SWITCHING
+// ═══════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('#omikujiContainer .screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ═══════════════════════════════
+//  TODAY DATE
+// ═══════════════════════════════
+(function() {
+  const now = new Date();
+  const days = ['日','一','二','三','四','五','六'];
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const w = days[now.getDay()];
+  document.getElementById('dateDisplay').textContent = `${y} 年 ${m} 月 ${d} 日　星期${w}`;
+})();
+
+// ═══════════════════════════════
+//  WEIGHTED RANDOM PICK
+// ═══════════════════════════════
+function weightedPick(list) {
+  const total = list.reduce((s, x) => s + x.weight, 0);
+  let r = Math.random() * total;
+  for (const item of list) {
+    r -= item.weight;
+    if (r <= 0) return item;
+  }
+  return list[list.length - 1];
+}
+
+// ═══════════════════════════════
+//  DRAW ANIMATION
+// ═══════════════════════════════
+function startDraw() {
+  showScreen('screen-draw');
+
+  const char = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+  const fortune = weightedPick(FORTUNE_WEIGHTS);
+  const stage = document.getElementById('drawStage');
+  const img   = document.getElementById('drawImg');
+  const hint  = document.getElementById('drawHint');
+  const prompt= document.getElementById('drawPrompt');
+
+  // Reset
+  img.classList.remove('revealed');
+  img.src = char.img;
+  hint.textContent = '';
+  prompt.textContent = '正在感应你的运势…';
+  stage.classList.remove('draw-shake');
+
+  // Phase 1: shake
+  setTimeout(() => {
+    stage.classList.add('draw-shake');
+    prompt.textContent = '唔…感觉到了什么！';
+  }, 300);
+
+  // Phase 2: flash characters
+  let flashCount = 0;
+  const flashInterval = setInterval(() => {
+    const randomChar = CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
+    img.src = randomChar.img;
+    img.classList.add('revealed');
+    flashCount++;
+    if (flashCount >= 5) {
+      clearInterval(flashInterval);
+      // Phase 3: settle on final character
+      img.src = char.img;
+      img.classList.add('revealed');
+      stage.classList.remove('draw-shake');
+      prompt.textContent = '就是你了！';
+      hint.textContent = char.name + '（' + char.jp + '）';
+
+      // Phase 4: show result
+      setTimeout(() => {
+        showResult(char, fortune);
+      }, 1200);
+    }
+  }, 250);
+}
+
+// ═══════════════════════════════
+//  SHOW RESULT
+// ═══════════════════════════════
+function showResult(char, fortune) {
+  showScreen('screen-result');
+  const msg = FORTUNE_MSGS[fortune.key];
+  const pick = msg[Math.floor(Math.random() * msg.length)];
+  const det = makeDetails(fortune.key);
+
+  const html = `
+    <div class="result-char">
+      <img src="${char.img}" alt="${char.name}">
+    </div>
+    <div class="result-char-name">${char.name} 送来的运势</div>
+    <div class="fortune-badge ${fortune.key}">${fortune.level}</div>
+    <div class="fortune-message">${fortune.star}</div>
+
+    <p style="font-size:0.9rem;color:var(--ink-light);line-height:1.7;margin-bottom:14px;max-width:420px;margin-left:auto;margin-right:auto;">
+      ${pick}
+    </p>
+
+    <div class="fortune-details">
+      <div class="fortune-detail-row">
+        <span class="fd-icon">💕</span>
+        <span class="fd-label">恋爱运</span>
+        <span class="fd-value">${det.love}</span>
+      </div>
+      <div class="fortune-detail-row">
+        <span class="fd-icon">💼</span>
+        <span class="fd-label">工作运</span>
+        <span class="fd-value">${det.work}</span>
+      </div>
+      <div class="fortune-detail-row">
+        <span class="fd-icon">🩺</span>
+        <span class="fd-label">健康运</span>
+        <span class="fd-value">${det.health}</span>
+      </div>
+    </div>
+
+    <div class="lucky-extras">
+      <span class="lucky-extra item">🎁 幸运物：${det.luckyItem}</span>
+      <span class="lucky-extra color">🎨 幸运色：${det.luckyColor}</span>
+      <span class="lucky-extra number">🔢 幸运数字：${det.luckyNumber}</span>
+      <span class="lucky-extra direction">🧭 幸运方位：${det.direction}</span>
+    </div>
+
+    <div class="redraw-row">
+      <button class="btn btn-secondary" onclick="startDraw()">🔄 再抽一次</button>
+    </div>
+  `;
+
+  document.getElementById('resultContent').innerHTML = html;
+}
+</script>
+</body>
+</html>
