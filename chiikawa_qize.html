@@ -956,13 +956,29 @@ function prevQuestion(){
   currentQ--; renderQuestion();
 }
 
+// Compute theoretical max score per character (pre-calculated once)
+const THEORETICAL_MAX = {};
+CHAR_KEYS.forEach(k => { THEORETICAL_MAX[k] = 0; });
+QQ.forEach(q => {
+  const charMax = {};
+  q.o.forEach(opt => {
+    if (!opt.s) return;
+    for (let k in opt.s) {
+      charMax[k] = Math.max(charMax[k] || 0, opt.s[k]);
+    }
+  });
+  for (let k in charMax) THEORETICAL_MAX[k] += charMax[k];
+});
+
 function showResult(){
   showScreen('screen-result');
   const area = document.getElementById('resultArea');
-  // Calc percentages
-  let maxScore = 0;
-  CHAR_KEYS.forEach(k=>{if(scores[k]>maxScore)maxScore=scores[k];});
-  const rankings = CHAR_KEYS.map(k=>({key:k, score:scores[k], pct: maxScore>0 ? Math.round(scores[k]/maxScore*100) : 0})).sort((a,b)=>b.score-a.score);
+  // Calc percentages against theoretical max
+  const rankings = CHAR_KEYS.map(k => ({
+    key: k,
+    score: scores[k],
+    pct: THEORETICAL_MAX[k] > 0 ? Math.round(scores[k] / THEORETICAL_MAX[k] * 100) : 0
+  })).sort((a,b)=>b.score-a.score);
   const top3 = rankings.slice(0,3);
   const ch1 = CHARS[top3[0].key];
   const pct1 = top3[0].pct;
