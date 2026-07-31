@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ちいかわ · 角色关系图谱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink: oklch(72% 0.18 355);
+  --pink-light: oklch(88% 0.08 355);
+  --pink-pale: oklch(95% 0.04 355);
+  --cream: oklch(97% 0.015 85);
+  --cream-2: oklch(93% 0.02 85);
+  --cream-3: oklch(88% 0.025 85);
+  --ink: oklch(22% 0.012 50);
+  --ink-light: oklch(40% 0.01 50);
+  --ink-lighter: oklch(55% 0.008 50);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 999px;
+  --shadow: 0 4px 20px oklch(22% 0.012 50 / 0.06);
+  --shadow-lg: 0 12px 40px oklch(22% 0.012 50 / 0.12);
+
+  /* edge colors */
+  --edge-friend: oklch(72% 0.16 180);
+  --edge-best: oklch(72% 0.18 355);
+  --edge-mentor: oklch(75% 0.15 70);
+  --edge-mystery: oklch(68% 0.10 300);
+  --edge-trio: oklch(74% 0.13 250);
+  --edge-colleague: oklch(68% 0.10 150);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow:clip;scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;font-size:16px;line-height:1.65;
+  color:var(--ink);background:var(--cream);min-height:100dvh;
+  overflow:hidden;
+}
+body::before{
+  content:"";position:fixed;top:-200px;right:-150px;width:500px;height:500px;
+  border-radius:50%;
+  background:radial-gradient(circle,oklch(95% 0.04 355 / 0.5),transparent);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:"";position:fixed;bottom:-120px;left:-100px;width:400px;height:400px;
+  border-radius:50%;
+  background:radial-gradient(circle,oklch(94% 0.06 90 / 0.35),transparent);
+  pointer-events:none;z-index:0;
+}
+
+/* header */
+header {
+  position:relative;z-index:20;
+  padding:12px 20px;max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.wordmark {
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.1rem;
+  color:var(--ink);letter-spacing:-0.03em;text-decoration:none;
+}
+.wordmark span{color:var(--pink)}
+header nav{display:flex;gap:8px;align-items:center}
+header nav a{
+  font-size:0.78rem;font-weight:500;color:var(--ink-light);text-decoration:none;
+  padding:5px 10px;border-radius:var(--radius-pill);
+  transition:all 0.2s ease;
+}
+header nav a:hover{color:var(--pink);background:var(--pink-pale)}
+
+/* graph container */
+.graph-wrap {
+  position:relative;z-index:10;width:100%;height:calc(100dvh - 56px);
+  cursor:grab;user-select:none;-webkit-user-select:none;
+}
+.graph-wrap:active{cursor:grabbing}
+.graph-wrap.panning{cursor:grabbing}
+
+svg#graphSvg{width:100%;height:100%;display:block}
+
+/* edge labels */
+.edge-label {
+  font-size:10px;font-family:'Noto Serif JP','Plus Jakarta Sans',sans-serif;
+  fill:var(--ink-lighter);text-anchor:middle;
+  pointer-events:none;
+}
+
+/* node group */
+.node-group{cursor:pointer;transition:transform 0.15s ease}
+.node-group:hover{filter:brightness(1.08)}
+.node-group .node-ring{fill:none;stroke-width:2.5;transition:all 0.3s ease}
+.node-group:hover .node-ring{stroke-width:3.5}
+.node-group .node-avatar{border-radius:50%}
+
+.node-group.highlight .node-ring{stroke-width:4;filter:drop-shadow(0 0 6px var(--pink))}
+.node-group.dim{opacity:0.3;pointer-events:none}
+
+/* node name label */
+.node-label{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;
+  font-size:12px;fill:var(--ink);text-anchor:middle;
+  pointer-events:none;
+}
+.node-sub{
+  font-size:9px;fill:var(--ink-lighter);text-anchor:middle;
+  pointer-events:none;
+}
+
+/* edge lines */
+.edge-line{fill:none;stroke-width:2;stroke-linecap:round;transition:all 0.3s ease}
+.edge-line.highlighted{stroke-width:3.5;filter:drop-shadow(0 0 3px currentColor)}
+.edge-line.dimmed{opacity:0.12}
+.edge-line.type-best{stroke:var(--edge-best)}
+.edge-line.type-friend{stroke:var(--edge-friend)}
+.edge-line.type-mentor{stroke:var(--edge-mentor)}
+.edge-line.type-mystery{stroke:var(--edge-mystery)}
+.edge-line.type-trio{stroke:var(--edge-trio)}
+.edge-line.type-colleague{stroke:var(--edge-colleague)}
+
+/* ── INFO PANEL ── */
+.info-panel {
+  position:fixed;right:16px;top:70px;bottom:16px;z-index:30;
+  width:min(380px,92vw);background:white;border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);overflow-y:auto;
+  transform:translateX(calc(100% + 20px));
+  transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
+  display:flex;flex-direction:column;
+}
+.info-panel.open{transform:translateX(0)}
+.info-panel-header{
+  display:flex;align-items:center;gap:14px;
+  padding:20px;border-bottom:1px solid var(--cream-3);
+  position:sticky;top:0;background:white;z-index:2;
+}
+.info-panel-header .panel-avatar{
+  width:60px;height:60px;border-radius:50%;overflow:hidden;
+  background:var(--cream-2);flex-shrink:0;
+  box-shadow:0 2px 10px oklch(22% 0.012 50 / 0.08);
+}
+.info-panel-header .panel-avatar img{width:100%;height:100%;object-fit:cover}
+.info-panel-header .panel-info{flex:1;min-width:0}
+.info-panel-header .panel-name{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;
+  font-size:1.1rem;letter-spacing:-0.02em;
+}
+.info-panel-header .panel-jp{font-size:0.78rem;color:var(--ink-lighter)}
+.info-panel-close{
+  width:32px;height:32px;border-radius:50%;border:none;
+  background:var(--cream-2);color:var(--ink-light);
+  font-size:1.1rem;cursor:pointer;display:grid;place-items:center;
+  flex-shrink:0;transition:all 0.2s ease;
+}
+.info-panel-close:hover{background:var(--cream-3);color:var(--ink)}
+
+.info-panel-body{padding:16px 20px 20px;flex:1}
+.info-panel-body .desc{
+  font-size:0.85rem;color:var(--ink-light);line-height:1.7;margin-bottom:16px;
+}
+
+.info-panel-body .section-title{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;
+  font-size:0.82rem;color:var(--ink);margin-bottom:10px;
+  letter-spacing:-0.01em;
+}
+
+.rel-list{display:flex;flex-direction:column;gap:6px}
+.rel-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 14px;border-radius:var(--radius-sm);
+  background:var(--cream);cursor:pointer;
+  transition:all 0.2s ease;border:2px solid transparent;
+}
+.rel-item:hover{background:white;border-color:var(--pink-light)}
+.rel-item .rel-avatar{
+  width:40px;height:40px;border-radius:50%;overflow:hidden;
+  background:var(--cream-2);flex-shrink:0;
+}
+.rel-item .rel-avatar img{width:100%;height:100%;object-fit:cover}
+.rel-item .rel-info{flex:1;min-width:0}
+.rel-item .rel-name{
+  font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;
+  font-size:0.88rem;line-height:1.2;
+}
+.rel-item .rel-tag{
+  display:inline-block;font-size:0.62rem;font-weight:600;
+  padding:1px 8px;border-radius:var(--radius-pill);
+  letter-spacing:0.03em;margin-top:2px;
+}
+.rel-item .rel-detail{font-size:0.75rem;color:var(--ink-lighter);margin-top:2px;line-height:1.5}
+.rel-item .rel-arrow{color:var(--ink-lighter);font-size:0.8rem;flex-shrink:0}
+
+/* tag colors */
+.tag-best{background:oklch(93% 0.06 355);color:var(--pink)}
+.tag-friend{background:oklch(93% 0.06 180);color:oklch(55% 0.14 180)}
+.tag-mentor{background:oklch(93% 0.06 70);color:oklch(55% 0.12 70)}
+.tag-mystery{background:oklch(93% 0.05 300);color:oklch(50% 0.10 300)}
+.tag-trio{background:oklch(93% 0.05 240);color:oklch(50% 0.12 250)}
+.tag-colleague{background:oklch(93% 0.05 150);color:oklch(50% 0.10 160)}
+
+/* legend */
+.legend{
+  position:fixed;left:16px;bottom:16px;z-index:20;
+  background:white;border-radius:var(--radius-sm);padding:12px 16px;
+  box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:10px;
+}
+.legend-item{
+  display:flex;align-items:center;gap:5px;font-size:0.7rem;color:var(--ink-light);
+}
+.legend-line{width:16px;height:3px;border-radius:2px;flex-shrink:0}
+
+/* zoom hint */
+.zoom-hint{
+  position:fixed;left:50%;bottom:80px;z-index:15;transform:translateX(-50%);
+  font-size:0.72rem;color:var(--ink-lighter);opacity:0;
+  transition:opacity 0.5s ease;
+  background:white;padding:6px 14px;border-radius:var(--radius-pill);
+  box-shadow:var(--shadow);pointer-events:none;
+}
+.zoom-hint.show{opacity:1}
+
+/* mobile */
+@media(max-width:768px){
+  header{padding:8px 12px}
+  .wordmark{font-size:0.95rem}
+  header nav a{font-size:0.7rem;padding:4px 8px}
+  .graph-wrap{height:calc(100dvh - 48px)}
+  .info-panel{right:8px;top:56px;bottom:8px;width:min(340px,94vw)}
+  .legend{left:8px;bottom:8px;gap:6px;padding:8px 12px}
+  .legend-item{font-size:0.65rem}
+}
+@media(max-width:480px){
+  header nav{gap:4px}
+  header nav a{font-size:0.65rem;padding:3px 6px}
+  .info-panel{right:4px;top:50px;bottom:4px;width:calc(100vw - 8px);border-radius:var(--radius-sm)}
+  .info-panel-header{padding:14px}
+  .info-panel-header .panel-avatar{width:48px;height:48px}
+  .info-panel-body{padding:12px 14px 16px}
+  .info-panel-body .desc{font-size:0.8rem}
+  .rel-item{padding:8px 10px;gap:8px}
+  .rel-item .rel-avatar{width:34px;height:34px}
+  .legend{left:4px;bottom:4px;gap:4px;padding:6px 10px}
+  .legend-item{font-size:0.6rem}
+  .legend-line{width:12px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="chiikawa_qize.html" class="wordmark">ちいかわ<span>.</span> 关系图</a>
+  <nav>
+    <a href="chiikawa_qize.html">🧪 测试</a>
+    <a href="chiikawa_fortune.html">⛩️ 运势</a>
+    <a href="chiikawa_role.html">🐾 图鉴</a>
+  </nav>
+</header>
+
+<div class="graph-wrap" id="graphWrap">
+  <svg id="graphSvg"></svg>
+</div>
+
+<div class="legend" id="legend">
+  <div class="legend-item"><span class="legend-line" style="background:var(--edge-best)"></span> 挚友</div>
+  <div class="legend-item"><span class="legend-line" style="background:var(--edge-trio)"></span> 三人组</div>
+  <div class="legend-item"><span class="legend-line" style="background:var(--edge-friend)"></span> 朋友</div>
+  <div class="legend-item"><span class="legend-line" style="background:var(--edge-mentor)"></span> 师徒</div>
+  <div class="legend-item"><span class="legend-line" style="background:var(--edge-colleague)"></span> 同事</div>
+  <div class="legend-item"><span class="legend-line" style="background:var(--edge-mystery)"></span> 神秘联系</div>
+</div>
+
+<div class="info-panel" id="infoPanel">
+  <div class="info-panel-header">
+    <div class="panel-avatar"><img id="panelAvatar" src="" alt=""></div>
+    <div class="panel-info">
+      <div class="panel-name" id="panelName"></div>
+      <div class="panel-jp" id="panelJp"></div>
+    </div>
+    <button class="info-panel-close" onclick="closePanel()">✕</button>
+  </div>
+  <div class="info-panel-body" id="panelBody"></div>
+</div>
+
+<script>
+// ══════════════════════════════════
+//  CHARACTER DATA
+// ══════════════════════════════════
+const CHARS = {
+  chiikawa: {
+    id:'chiikawa', name:'吉伊卡哇', jp:'ちいかわ', mbti:'INFP',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/2/2c/AdorableCutieChiikawa.png',
+    desc:'主角。白色小仓鼠，胆小爱哭但内心勇敢。幸运体质，抽奖王。虽然考试运差，但为了朋友可以变得非常坚强。',
+    color:'oklch(90% 0.06 355)'
+  },
+  hachiware: {
+    id:'hachiware', name:'小八', jp:'ハチワレ', mbti:'ENFP',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/6/61/SweetBabyHachiware2.png',
+    desc:'蓝白猫猫，三人组中唯一会说话的角色，担任翻译官。乐观开朗，爱弹吉他唱歌，片尾曲就是他唱的！',
+    color:oklch(88,0.08,240)
+  },
+  usagi: {
+    id:'usagi', name:'乌萨奇', jp:'うさぎ', mbti:'ESTP',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/4/43/YahaUsagi.png',
+    desc:'精力充沛的兔子，整天怪叫。战斗力最高，神出鬼没，没人知道它住哪。但关键时刻非常可靠。',
+    color:oklch(90,0.12,90)
+  },
+  rakko: {
+    id:'rakko', name:'海獺勇者', jp:'ラッコ', mbti:'ISTJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/6/63/FightOnRakko.png',
+    desc:'讨伐榜 No.1 的传奇勇者！吉伊和小八的师傅。虽然实力超群但性格慷慨，反差萌是超爱吃甜食。',
+    color:oklch(88,0.08,160)
+  },
+  momonga: {
+    id:'momonga', name:'小桃', jp:'モモンガ', mbti:'ESFP',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/a/a0/Momonga.png',
+    desc:'飞鼠。任性骄纵，超级喜欢装可爱求夸奖。和古本是好朋友。有个著名的"灵魂交换"都市传说。',
+    color:oklch(88,0.08,300)
+  },
+  kurimanju: {
+    id:'kurimanju', name:'栗子馒头', jp:'くりまんじゅう', mbti:'ISTP',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/9/93/TastyKurimanju.png',
+    desc:'蜜獾。话不多但沉稳可靠，爱喝酒吃零食，考取了饮酒证照。像大家的可靠大哥。',
+    color:oklch(86,0.12,80)
+  },
+  shisa: {
+    id:'shisa', name:'狮萨', jp:'シーサー', mbti:'ISFJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/1/12/RamenPleaseShisa.png',
+    desc:'以冲绳风狮爷为原型的角色。拉面店「郎」的店员，认真热血。目标是考取饮酒证和师傅喝酒。',
+    color:oklch(88,0.10,85)
+  },
+  kani: {
+    id:'kani', name:'古本', jp:'カニ', mbti:'INFJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/7/76/Kani-removebg-preview_%281%29.png',
+    desc:'粉色螃蟹，经营二手书店。温柔善良，热爱阅读。和小桃是好朋友，头上的螃蟹头带是小桃送的。',
+    color:oklch(88,0.06,10)
+  },
+  armor: {
+    id:'armor', name:'手工铠甲', jp:'手作り鎧', mbti:'ENFJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png',
+    desc:'盔甲人族群中最为温柔的一位。热爱手工制作，会缝制可爱的睡衣，性格温柔体贴。',
+    color:oklch(86,0.06,150)
+  },
+  anoko: {
+    id:'anoko', name:'那孩子', jp:'あのこ', mbti:'INTJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/b/ba/Anoko1.png',
+    desc:'毛茸茸的巨大怪物，疑似吉伊在工厂的前同事。充满谜团的存在，似乎还保留着过去的记忆。',
+    color:oklch(86,0.06,280)
+  },
+  ramen: {
+    id:'ramen', name:'拉面铠甲', jp:'ラーメン鎧', mbti:'ISTJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png',
+    desc:'在拉面店「郎」担任主厨的盔甲人。话少但手艺一流。狮萨的师傅。',
+    color:oklch(85,0.05,220)
+  },
+  labor: {
+    id:'labor', name:'劳动铠甲', jp:'労働鎧', mbti:'ESTJ',
+    img:'https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png',
+    desc:'负责分发除草和讨伐工作的盔甲人。是盔甲人族群中负责管理的角色。',
+    color:oklch(85,0.05,60)
+  }
+};
+
+// ══════════════════════════════════
+//  RELATIONSHIPS (edges)
+// ══════════════════════════════════
+const RELS = [
+  {from:'chiikawa', to:'hachiware', type:'best', label:'挚友', detail:'最亲密的伙伴。小八是吉伊的翻译官，能替吉伊说出心里话。两人经常一起行动、互相鼓励。'},
+  {from:'chiikawa', to:'usagi', type:'trio', label:'三人组', detail:'吉伊和乌萨奇都依赖小八翻译。乌萨奇虽然爱捉弄吉伊，但在危险时会第一个冲上去保护大家。'},
+  {from:'hachiware', to:'usagi', type:'trio', label:'三人组', detail:'小八能理解乌萨奇的怪叫并帮大家翻译。两人一猫一兔，性格互补，是 Chiikawa 世界的灵魂三人组。'},
+  {from:'chiikawa', to:'rakko', type:'mentor', label:'师徒', detail:'海獺勇者是吉伊和小八的讨伐师傅。吉伊非常崇拜他，海獺也常常关照这两位后辈。'},
+  {from:'hachiware', to:'rakko', type:'mentor', label:'师徒', detail:'小八和海獺勇者也建立了深厚的师徒情谊，经常一起吃饭、分享战斗经验。'},
+  {from:'chiikawa', to:'anoko', type:'mystery', label:'神秘联系', detail:'据推测那孩子是吉伊在工厂时的前同事。它对吉伊似乎有特殊反应，关于它真实身份的谜团仍在。'},
+  {from:'momonga', to:'kani', type:'friend', label:'好友', detail:'小桃和古本是好朋友。尽管小桃性格任性，古本总是包容它。古本头上的螃蟹头带也是小桃送的礼物。'},
+  {from:'shisa', to:'ramen', type:'mentor', label:'师徒', detail:'狮萨在拉面店「郎」当学徒，十分敬仰主厨拉面铠甲。梦想是考取饮酒证后和师傅一起喝酒。'},
+  {from:'armor', to:'ramen', type:'colleague', label:'同族', detail:'手工铠甲和拉面铠甲同属盔甲人族群。他们是同事，共同维持着 Chiikawa 世界的运转。'},
+  {from:'armor', to:'labor', type:'colleague', label:'同族', detail:'劳动铠甲负责分发工作，手工铠甲则制作各种手工品。他们是同事，各司其职。'},
+  {from:'chiikawa', to:'momonga', type:'friend', label:'认识', detail:'小桃偶尔也会和主角三人组一起出现，虽然它更常和古本待在一起。'},
+  {from:'kurimanju', to:'chiikawa', type:'friend', label:'关照', detail:'栗子馒头前辈像大哥一样关照这些小可爱们，尤其是吉伊这个胆小的后辈。'},
+  {from:'kurimanju', to:'hachiware', type:'friend', label:'关照', detail:'栗子馒头前辈也常常关照小八，两人性格都比较开朗，能聊得来。'},
+  {from:'kurimanju', to:'usagi', type:'friend', label:'关照', detail:'栗子馒头前辈对乌萨奇的怪叫和捣蛋行为总是淡然一笑，以大哥的姿态包容。'},
+  {from:'armor', to:'chiikawa', type:'friend', label:'朋友', detail:'手工铠甲性格温柔，和小可爱们关系都很好。他的手工制品很受大家欢迎。'},
+];
+
+// ══════════════════════════════════
+//  GRAPH RENDERER
+// ══════════════════════════════════
+const svg = document.getElementById('graphSvg');
+const wrap = document.getElementById('graphWrap');
+const panel = document.getElementById('infoPanel');
+
+// Node positioning (will be scaled)
+const BASE_POS = {
+  chiikawa:    {x:600, y:380},
+  hachiware:   {x:470, y:280},
+  usagi:       {x:470, y:480},
+  rakko:       {x:750, y:380},
+  momonga:     {x:340, y:200},
+  kani:        {x:300, y:320},
+  shisa:       {x:750, y:250},
+  kurimanju:   {x:620, y:520},
+  armor:       {x:340, y:500},
+  anoko:       {x:550, y:580},
+  ramen:       {x:880, y:280},
+  labor:       {x:200, y:400},
+};
+
+const NODE_R = 34; // node radius
+let scale = 1, panX = 0, panY = 0;
+let selectedNode = null;
+let isPanning = false, panStart = {x:0,y:0}, origPan = {x:0,y:0};
+
+function px(x){return x*scale + panX}
+function py(y){return y*scale + panY}
+
+function render() {
+  let h = '';
+  const ns = 'http://www.w3.org/2000/svg';
+
+  // ── EDGES ──
+  RELS.forEach(rel => {
+    const f = BASE_POS[rel.from], t = BASE_POS[rel.to];
+    if (!f || !t) return;
+
+    // offset to not overlap with node center
+    const dx = t.x - f.x, dy = t.y - f.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const ux = dx/dist, uy = dy/dist;
+    const sx = f.x + ux*NODE_R, sy = f.y + uy*NODE_R;
+    const ex = t.x - ux*NODE_R, ey = t.y - uy*NODE_R - 0.5;
+    const mx = (sx+ex)/2, my = (sy+ey)/2;
+
+    const classes = ['edge-line', 'type-'+rel.type].join(' ');
+    h += `<line class="${classes}" x1="${px(sx)}" y1="${py(sy)}" x2="${px(ex)}" y2="${py(ey)}" data-from="${rel.from}" data-to="${rel.to}" />`;
+    // label at midpoint
+    h += `<text class="edge-label" x="${px(mx)}" y="${py(my-8)}">${rel.label}</text>`;
+  });
+
+  // ── NODES ──
+  Object.values(CHARS).forEach(ch => {
+    const p = BASE_POS[ch.id]; if (!p) return;
+    const cx = px(p.x), cy = py(p.y);
+    const r = NODE_R * scale;
+    const color = ch.color || '#888';
+    h += `<g class="node-group" data-id="${ch.id}" transform="translate(${cx-r},${cy-r})" style="cursor:pointer">
+      <circle class="node-ring" cx="${r}" cy="${r}" r="${r}" stroke="${color}" />
+      <clipPath id="clip-${ch.id}"><circle cx="${r}" cy="${r}" r="${r-3}" /></clipPath>
+      <image href="${ch.img}" x="3" y="3" width="${2*r-6}" height="${2*r-6}" clip-path="url(#clip-${ch.id})" />
+      <circle cx="${r}" cy="${r}" r="${r}" fill="none" stroke="${color}" stroke-width="2.5" style="pointer-events:all" />
+    </g>
+    <text class="node-label" x="${cx}" y="${cy + r + 16*scale}" font-size="${12*scale}">${ch.name}</text>
+    <text class="node-sub" x="${cx}" y="${cy + r + 28*scale}" font-size="${9*scale}">${ch.jp}</text>`;
+  });
+
+  svg.innerHTML = h;
+
+  // ── EVENTS ──
+  svg.querySelectorAll('.node-group').forEach(g => {
+    g.addEventListener('click', e => { e.stopPropagation(); onNodeClick(g.dataset.id); });
+    g.addEventListener('pointerdown', e => { e.stopPropagation(); e.preventDefault(); startDragNode(e, g.dataset.id); });
+  });
+  svg.querySelectorAll('.edge-line').forEach(line => {
+    line.addEventListener('click', e => { e.stopPropagation(); onEdgeClick(line.dataset); });
+  });
+}
+
+function startDragNode(e, id) {
+  const ch = CHARS[id];
+  const p = BASE_POS[id]; if (!p) return;
+  const startX = e.clientX, startY = e.clientY;
+  const origX = p.x, origY = p.y;
+
+  function onMove(ev) {
+    const dx = (ev.clientX - startX) / scale;
+    const dy = (ev.clientY - startY) / scale;
+    p.x = origX + dx;
+    p.y = origY + dy;
+    render();
+  }
+  function onUp() {
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+  }
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp);
+}
+
+function onNodeClick(id) {
+  selectedNode = id;
+  highlightNode(id);
+  openPanel(id);
+}
+
+function onEdgeClick(data) {
+  const from = data.from, to = data.to;
+  if (from && to) {
+    selectedNode = from;
+    highlightNode(from);
+    openPanel(from, to); // open panel focused on this relationship
+  }
+}
+
+function highlightNode(id) {
+  svg.querySelectorAll('.node-group').forEach(g => g.classList.remove('highlight','dim'));
+  svg.querySelectorAll('.edge-line').forEach(l => l.classList.remove('highlighted','dimmed'));
+
+  const nodeEl = svg.querySelector(`.node-group[data-id="${id}"]`);
+  if (nodeEl) nodeEl.classList.add('highlight');
+
+  // Find connected nodes
+  const connected = new Set([id]);
+  RELS.forEach(r => {
+    if (r.from === id) connected.add(r.to);
+    if (r.to === id) connected.add(r.from);
+  });
+
+  // Dim non-connected nodes
+  svg.querySelectorAll('.node-group').forEach(g => {
+    if (!connected.has(g.dataset.id)) g.classList.add('dim');
+  });
+
+  // Highlight connected edges, dim others
+  svg.querySelectorAll('.edge-line').forEach(l => {
+    const f = l.dataset.from, t = l.dataset.to;
+    if ((f===id && connected.has(t)) || (t===id && connected.has(f))) {
+      l.classList.add('highlighted');
+    } else {
+      l.classList.add('dimmed');
+    }
+  });
+}
+
+function clearHighlight() {
+  selectedNode = null;
+  svg.querySelectorAll('.node-group').forEach(g => g.classList.remove('highlight','dim'));
+  svg.querySelectorAll('.edge-line').forEach(l => l.classList.remove('highlighted','dimmed'));
+}
+
+// ══════════════════════════════════
+//  INFO PANEL
+// ══════════════════════════════════
+function openPanel(charId, focusRelTo) {
+  const ch = CHARS[charId]; if (!ch) return;
+  document.getElementById('panelAvatar').src = ch.img;
+  document.getElementById('panelName').textContent = ch.name + ' · ' + ch.mbti;
+  document.getElementById('panelJp').textContent = ch.jp;
+
+  // Find all relationships involving this character
+  const rels = RELS.filter(r => r.from === charId || r.to === charId);
+
+  // Build relationship list, put focusRelTo first if specified
+  let sortedRels = [...rels];
+  if (focusRelTo) {
+    sortedRels.sort((a,b) => {
+      const aMatch = (a.from===charId && a.to===focusRelTo) || (a.to===charId && a.from===focusRelTo);
+      const bMatch = (b.from===charId && b.to===focusRelTo) || (b.to===charId && b.from===focusRelTo);
+      return aMatch ? -1 : bMatch ? 1 : 0;
+    });
+  }
+
+  let body = `<p class="desc">${ch.desc}</p>`;
+  body += `<div class="section-title">🔗 角色关系（${rels.length}）</div>`;
+  body += '<div class="rel-list">';
+
+  sortedRels.forEach(r => {
+    const otherId = r.from === charId ? r.to : r.from;
+    const other = CHARS[otherId]; if (!other) return;
+    const tagClass = 'tag-'+r.type;
+    body += `
+    <div class="rel-item" onclick="navigateTo('${otherId}')">
+      <div class="rel-avatar"><img src="${other.img}" alt="${other.name}" loading="lazy"></div>
+      <div class="rel-info">
+        <div class="rel-name">${other.name}</div>
+        <span class="rel-tag ${tagClass}">${r.label}</span>
+        <div class="rel-detail">${r.detail || ''}</div>
+      </div>
+      <span class="rel-arrow">→</span>
+    </div>`;
+  });
+
+  body += '</div>';
+  document.getElementById('panelBody').innerHTML = body;
+  panel.classList.add('open');
+}
+
+function navigateTo(id) {
+  selectedNode = id;
+  highlightNode(id);
+  openPanel(id);
+  // Scroll panel to top
+  panel.scrollTop = 0;
+}
+
+function closePanel() {
+  panel.classList.remove('open');
+  clearHighlight();
+}
+
+// ══════════════════════════════════
+//  PAN & ZOOM
+// ══════════════════════════════════
+wrap.addEventListener('pointerdown', e => {
+  if (e.target.closest('.node-group')) return;
+  if (e.target.closest('.edge-line') || e.target.closest('.edge-label')) return;
+  isPanning = true;
+  panStart = {x:e.clientX, y:e.clientY};
+  origPan = {x:panX, y:panY};
+  wrap.classList.add('panning');
+  e.preventDefault();
+});
+
+document.addEventListener('pointermove', e => {
+  if (!isPanning) return;
+  panX = origPan.x + (e.clientX - panStart.x);
+  panY = origPan.y + (e.clientY - panStart.y);
+  render();
+});
+
+document.addEventListener('pointerup', () => {
+  if (isPanning) { isPanning = false; wrap.classList.remove('panning'); }
+});
+
+wrap.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = wrap.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const oldScale = scale;
+  scale *= e.deltaY < 0 ? 1.08 : 0.93;
+  scale = Math.max(0.35, Math.min(2.8, scale));
+  // Zoom toward cursor
+  panX = mx - (mx - panX) * (scale / oldScale);
+  panY = my - (my - panY) * (scale / oldScale);
+  render();
+}, {passive:false});
+
+// Double-click to reset view
+wrap.addEventListener('dblclick', e => {
+  if (e.target.closest('.node-group')) return;
+  scale = 1; panX = 0; panY = 0;
+  render();
+  closePanel();
+});
+
+// Click on background to close panel & clear highlight
+wrap.addEventListener('click', e => {
+  if (e.target.closest('.node-group')) return;
+  if (e.target.closest('.edge-line')) return;
+  if (!isPanning && !e.target.closest('.info-panel')) {
+    closePanel();
+  }
+});
+
+// Close panel with Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closePanel();
+});
+
+// ── INITIAL RENDER ──
+render();
+
+// ── RESPONSIVE RECENTER ──
+function recenterGraph() {
+  const w = wrap.clientWidth;
+  const h = wrap.clientHeight;
+  // Center on chiikawa node
+  const cp = BASE_POS.chiikawa;
+  panX = w/2 - cp.x;
+  panY = h/2 - cp.y;
+  scale = Math.min(w/1200, h/800, 0.85);
+  render();
+}
+window.addEventListener('resize', () => { if (!isPanning) recenterGraph(); });
+recenterGraph();
+</script>
+</body>
+</html>
