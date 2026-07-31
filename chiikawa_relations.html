@@ -70,15 +70,17 @@ header nav a:hover{color:var(--pink);background:var(--pink-pale)}
 .viewport{
   position:fixed;top:56px;left:0;right:0;bottom:0;z-index:10;
   cursor:grab;overflow:hidden;
+  touch-action:none;
+  -webkit-user-select:none;user-select:none;
 }
 .viewport:active,.viewport.panning{cursor:grabbing}
 
 /* ── Edge SVG Layer ── */
 .edge-svg{
   position:absolute;top:0;left:0;width:100%;height:100%;
-  pointer-events:none;z-index:1;
+  z-index:1;
 }
-.edge-svg line{stroke-width:2.5;stroke-linecap:round;transition:all 0.3s ease;cursor:pointer}
+.edge-svg line{stroke-width:2.5;stroke-linecap:round;transition:all 0.3s ease;cursor:pointer;pointer-events:all}
 .edge-svg line.type-best{stroke:var(--edge-best)}
 .edge-svg line.type-friend{stroke:var(--edge-friend)}
 .edge-svg line.type-mentor{stroke:var(--edge-mentor)}
@@ -88,6 +90,12 @@ header nav a:hover{color:var(--pink);background:var(--pink-pale)}
 
 .edge-svg line.highlighted{stroke-width:4;filter:drop-shadow(0 0 3px currentColor)}
 .edge-svg line.dimmed{opacity:0.1}
+.edge-svg text.edge-label{
+  font-size:10px;font-family:sans-serif;fill:var(--ink-lighter);
+  text-anchor:middle;pointer-events:none;dominant-baseline:middle;
+}
+.edge-svg text.dimmed{opacity:0.1}
+.edge-svg text.highlighted{fill:var(--ink);font-weight:600}
 
 /* ── Nodes Layer ── */
 .nodes-layer{
@@ -213,6 +221,9 @@ header nav a:hover{color:var(--pink);background:var(--pink-pale)}
   .wordmark{font-size:0.9rem}
   header nav a{font-size:0.7rem;padding:4px 7px}
   .viewport{top:44px}
+  .node-avatar{width:52px;height:52px;border-width:2px}
+  .node-name{font-size:10px}
+  .node-jp{font-size:7px}
   .info-panel{right:8px;top:52px;bottom:8px;width:min(320px,94vw)}
   .legend{left:6px;bottom:6px;gap:6px;padding:8px 10px}
   .legend-item{font-size:0.62rem}
@@ -220,13 +231,22 @@ header nav a:hover{color:var(--pink);background:var(--pink-pale)}
 @media(max-width:480px){
   header nav{gap:3px}
   header nav a{font-size:0.62rem;padding:3px 5px}
-  .info-panel{right:4px;top:46px;bottom:4px;width:calc(100vw - 8px);border-radius:var(--radius-sm)}
+  .viewport{top:40px}
+  .node-avatar{width:44px;height:44px;border-width:2px}
+  .node-name{font-size:9px}
+  .node-jp{font-size:7px}
+  .edge-svg line{stroke-width:2}
+  .edge-svg text.edge-label{display:none}
+  .info-panel{right:4px;top:44px;bottom:4px;width:calc(100vw - 8px);border-radius:var(--radius-sm)}
   .panel-header{padding:14px}
   .panel-avatar{width:46px;height:46px}
   .panel-body{padding:12px 14px 16px}
   .panel-body .desc{font-size:0.78rem}
   .rel-item{padding:8px 10px;gap:8px}
   .rel-item .ravatar{width:32px;height:32px}
+  .legend{left:4px;bottom:4px;gap:4px;padding:4px 8px}
+  .legend-item{font-size:0.58rem}
+  .legend-line{width:10px}
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
@@ -328,18 +348,18 @@ const RELS = [
 
 // ════════════════ LAYOUT ════════════════
 const BASE = {
-  chiikawa:  {x:580, y:360},
-  hachiware: {x:430, y:280},
-  usagi:    {x:430, y:440},
-  rakko:    {x:730, y:360},
-  momonga:  {x:320, y:200},
-  kani:     {x:280, y:340},
-  shisa:    {x:750, y:230},
-  kurimanju:{x:610, y:520},
-  armor:    {x:330, y:480},
-  anoko:    {x:560, y:580},
-  ramen:    {x:880, y:260},
-  labor:    {x:200, y:400}
+  chiikawa:  {x:800, y:460},
+  hachiware: {x:590, y:350},
+  usagi:    {x:590, y:570},
+  rakko:    {x:1020, y:460},
+  momonga:  {x:420, y:240},
+  kani:     {x:360, y:440},
+  shisa:    {x:1050, y:290},
+  kurimanju:{x:840, y:680},
+  armor:    {x:440, y:640},
+  anoko:    {x:760, y:760},
+  ramen:    {x:1240, y:330},
+  labor:    {x:240, y:540}
 };
 
 const NODE_R = 34;
@@ -370,7 +390,9 @@ function render() {
     const ux = dx/dist, uy = dy/dist;
     const sx = px(f.x + ux*NODE_R), sy = py(f.y + uy*NODE_R);
     const ex = px(t.x - ux*NODE_R), ey = py(t.y - uy*NODE_R);
+    const mx = (sx+ex)/2, my = (sy+ey)/2;
     edgeHtml += `<line class="edge-line type-${r.type}" x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" data-from="${r.from}" data-to="${r.to}" data-label="${r.label}" />`;
+    edgeHtml += `<text class="edge-label" x="${mx}" y="${my-6}" data-from="${r.from}" data-to="${r.to}">${r.label}</text>`;
   });
   edgeSvg.innerHTML = edgeHtml;
 
@@ -453,12 +475,18 @@ function highlightNode(id) {
     if (connected.has(l.dataset.from) && connected.has(l.dataset.to)) l.classList.add('highlighted');
     else l.classList.add('dimmed');
   });
+  edgeSvg.querySelectorAll('text.edge-label').forEach(t => {
+    t.classList.remove('highlighted','dimmed');
+    if (connected.has(t.dataset.from) && connected.has(t.dataset.to)) t.classList.add('highlighted');
+    else t.classList.add('dimmed');
+  });
 }
 
 function clearHighlight() {
   selectedNode = null;
   nodesLayer.querySelectorAll('.node-card').forEach(c => c.classList.remove('highlight','dim'));
   edgeSvg.querySelectorAll('line').forEach(l => l.classList.remove('highlighted','dimmed'));
+  edgeSvg.querySelectorAll('text.edge-label').forEach(t => t.classList.remove('highlighted','dimmed'));
 }
 
 // ════════════════ INFO PANEL ════════════════
@@ -545,7 +573,7 @@ function recenter() {
     const w = viewport.clientWidth, h = viewport.clientHeight;
     if (w <= 0 || h <= 0) return;
     const c = BASE.chiikawa;
-    scale = Math.max(0.35, Math.min(w/1200, h/780, 0.9));
+    scale = Math.max(0.35, Math.min(w/1500, h/1000, 0.9));
     panX = w/2 - c.x * scale;
     panY = h/2 - c.y * scale;
     Object.keys(BASE).forEach(k => { pos[k].x = BASE[k].x; pos[k].y = BASE[k].y; });
@@ -557,6 +585,31 @@ recenter();
 setTimeout(recenter, 300);
 setTimeout(recenter, 800);
 window.addEventListener('resize', recenter);
+
+// ── Pinch Zoom (Mobile) ──
+let pinchStartDist = 0, pinchStartScale = 1, pinchStartPan = {x:0,y:0}, pinchCenter = {x:0,y:0};
+viewport.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    pinchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    pinchStartScale = scale;
+    pinchStartPan = {x:panX, y:panY};
+    pinchCenter = {x:(e.touches[0].clientX + e.touches[1].clientX)/2, y:(e.touches[0].clientY + e.touches[1].clientY)/2};
+  }
+}, {passive:false});
+viewport.addEventListener('touchmove', e => {
+  if (e.touches.length === 2 && pinchStartDist > 0) {
+    e.preventDefault();
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    const newScale = Math.max(0.3, Math.min(3, pinchStartScale * (d / pinchStartDist)));
+    const rect = viewport.getBoundingClientRect();
+    const mx = pinchCenter.x - rect.left, my = pinchCenter.y - rect.top;
+    panX = mx - (mx - pinchStartPan.x) * (newScale / pinchStartScale);
+    panY = my - (my - pinchStartPan.y) * (newScale / pinchStartScale);
+    scale = newScale;
+    render();
+  }
+}, {passive:false});
+viewport.addEventListener('touchend', () => { pinchStartDist = 0; });
 </script>
 </body>
 </html>
