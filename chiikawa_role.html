@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ちいかわ · 吉伊卡哇 角色图鉴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS ===== */
+:root {
+  --pink: oklch(72% 0.18 355);
+  --pink-light: oklch(82% 0.12 355);
+  --pink-pale: oklch(93% 0.06 355);
+  --cream: oklch(97% 0.015 85);
+  --cream-2: oklch(94% 0.02 85);
+  --cream-3: oklch(90% 0.025 85);
+  --ink: oklch(22% 0.012 50);
+  --ink-light: oklch(40% 0.01 50);
+  --ink-lighter: oklch(55% 0.008 50);
+  --yellow: oklch(85% 0.14 90);
+  --blue: oklch(72% 0.13 240);
+  --green: oklch(78% 0.12 160);
+  --orange: oklch(80% 0.16 70);
+  --purple: oklch(75% 0.12 300);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+  --shadow: 0 4px 20px oklch(22% 0.012 50 / 0.05);
+  --shadow-hover: 0 12px 36px oklch(22% 0.012 50 / 0.1);
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: clip; scroll-behavior: smooth; }
+body {
+  overflow-x: clip;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4 {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+h1 { font-size: clamp(2.2rem, 5vw + 0.5rem, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3vw + 0.3rem, 2.2rem); }
+h3 { font-size: 1.2rem; }
+p { max-width: 65ch; color: var(--ink-light); }
+a { color: var(--pink); text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+
+/* ===== DECORATIVE BG ===== */
+body::before {
+  content: "";
+  position: fixed;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(93% 0.06 355 / 0.5), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -80px;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(92% 0.08 90 / 0.4), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ===== HEADER ===== */
+header {
+  position: relative;
+  z-index: 10;
+  padding: 14px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wordmark {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wordmark .jp { font-weight: 400; color: var(--ink-lighter); font-size: 0.9rem; }
+.wordmark .dot { color: var(--pink); }
+header nav { display: flex; gap: 16px; align-items: center; }
+header nav a {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-light);
+  text-decoration: none;
+  padding: 4px 0;
+}
+header nav a:hover { color: var(--pink); }
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 50px 24px 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  align-items: center;
+}
+.hero__text { flex: 1; min-width: 300px; }
+.hero__text .tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--pink);
+  color: white;
+  padding: 4px 14px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 14px;
+}
+.hero__text h1 { margin-bottom: 10px; }
+.hero__text h1 .jp {
+  font-weight: 400;
+  font-size: 0.5em;
+  color: var(--ink-lighter);
+  display: block;
+}
+.hero__text h1 em {
+  font-style: normal;
+  color: var(--pink);
+}
+.hero__text p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--ink-light);
+}
+
+/* ===== CHARACTER GRID (Catalogue) ===== */
+.char-grid-section {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+.char-grid-section .section-head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.char-grid-section .section-head h2 { margin-bottom: 6px; }
+.char-grid-section .section-head p { margin: 0 auto; font-size: 1rem; }
+
+.char-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 20px;
+}
+
+.char-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px 20px 20px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.char-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-4px);
+}
+.char-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+}
+.char-card[data-color="pink"]::before { background: var(--pink); }
+.char-card[data-color="blue"]::before { background: var(--blue); }
+.char-card[data-color="yellow"]::before { background: var(--yellow); }
+.char-card[data-color="green"]::before { background: var(--green); }
+.char-card[data-color="orange"]::before { background: var(--orange); }
+.char-card[data-color="purple"]::before { background: var(--purple); }
+
+.char-card__img {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--cream-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.char-card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.char-card__name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+.char-card__name-jp {
+  font-size: 0.8rem;
+  color: var(--ink-lighter);
+  margin-bottom: 10px;
+}
+.char-card__desc {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  line-height: 1.6;
+  text-align: left;
+}
+.char-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+  margin: 10px 0 8px;
+}
+.char-card__tags span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--cream-2);
+  color: var(--ink-light);
+}
+
+/* ===== MAIN TRIO SPOTLIGHT ===== */
+.trio-section {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 24px 50px;
+}
+.trio-section .section-head {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.trio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 28px;
+}
+.trio-card {
+  background: white;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+.trio-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+.trio-card__top {
+  padding: 28px 20px 16px;
+  text-align: center;
+}
+.trio-card__top .trio-img {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 12px oklch(22% 0.012 50 / 0.06);
+}
+.trio-card__top .trio-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.trio-card__top h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.trio-card__top .jp-name {
+  font-size: 0.8rem;
+  color: var(--ink-lighter);
+}
+.trio-card__body {
+  padding: 0 20px 20px;
+}
+.trio-card__body p {
+  font-size: 0.9rem;
+  color: var(--ink-light);
+  line-height: 1.7;
+}
+.trio-card__body .voice {
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+.trio-card:nth-child(1) .trio-card__top { background: oklch(96% 0.04 80); }
+.trio-card:nth-child(2) .trio-card__top { background: oklch(95% 0.04 220); }
+.trio-card:nth-child(3) .trio-card__top { background: oklch(96% 0.04 70); }
+.trio-card:nth-child(1) .voice { background: oklch(93% 0.06 355); color: var(--pink); }
+.trio-card:nth-child(2) .voice { background: oklch(93% 0.06 220); color: oklch(50% 0.12 240); }
+.trio-card:nth-child(3) .voice { background: oklch(94% 0.08 70); color: oklch(55% 0.14 70); }
+
+/* ===== FUN FACTS ===== */
+.facts-section {
+  position: relative;
+  z-index: 1;
+  background: white;
+  padding: 50px 24px;
+}
+.facts-inner {
+  max-width: 740px;
+  margin: 0 auto;
+}
+.facts-inner .section-head { text-align: center; margin-bottom: 32px; }
+.facts-inner h2 { margin-bottom: 6px; }
+.facts-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.facts-list li {
+  padding: 16px 20px;
+  background: var(--cream-2);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.6;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.facts-list li .icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ===== CTA ===== */
+.cta-section {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 50px 24px 60px;
+  text-align: center;
+}
+.cta-section h2 { margin-bottom: 6px; }
+.cta-section p { margin: 0 auto 24px; color: var(--ink-light); }
+.btn {
+  display: inline-block;
+  padding: 14px 36px;
+  background: var(--pink);
+  color: white;
+  border-radius: var(--radius-pill);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+.btn:hover {
+  background: oklch(65% 0.2 355);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px oklch(72% 0.18 355 / 0.4);
+}
+.btn:active { transform: translateY(0); }
+.btn:focus-visible {
+  outline: 2px solid oklch(55% 0.19 230);
+  outline-offset: 3px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 24px 36px;
+  text-align: center;
+}
+footer p { font-size: 0.8rem; color: var(--ink-lighter); line-height: 1.6; }
+footer .love { color: var(--pink); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .hero { flex-direction: column; padding: 30px 20px 20px; }
+  .hero__text { min-width: 0; }
+  .char-grid-section { padding: 20px 20px 40px; }
+  .char-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr)); gap: 16px; }
+  .trio-section { padding: 10px 20px 40px; }
+  .facts-section { padding: 40px 20px; }
+  .cta-section { padding: 40px 20px; }
+  header { padding: 12px 20px; }
+  header nav { gap: 10px; }
+  header nav a { font-size: 0.8rem; }
+}
+
+@media (max-width: 414px) {
+  .char-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .char-card { padding: 16px 14px; }
+  .char-card__img { width: 60px; height: 60px; }
+  .trio-grid { grid-template-columns: 1fr; gap: 20px; }
+  .trio-card__top .trio-img { width: 80px; height: 80px; }
+  .hero__text h1 { font-size: 1.8rem; }
+}
+
+@media (max-width: 320px) {
+  .char-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .char-card:hover, .trio-card:hover { transform: none; }
+  .btn:hover { transform: none; }
+}
+
+/* ===== MODAL / DIALOG ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: oklch(22% 0.012 50 / 0.5);
+  z-index: 400;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: block; }
+
+dialog.character-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  z-index: 500;
+  width: min(92vw, 560px);
+  max-height: min(85vh, 600px);
+  border: none;
+  border-radius: 20px;
+  background: white;
+  padding: 0;
+  overflow-y: auto;
+  box-shadow: 0 24px 64px oklch(22% 0.012 50 / 0.2);
+  animation: dialog-in 0.25s var(--ease-out);
+}
+dialog.character-dialog::backdrop {
+  background: oklch(22% 0.012 50 / 0.5);
+  backdrop-filter: blur(4px);
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(0.92) translateY(16px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.dialog-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: oklch(22% 0.012 50 / 0.06);
+  color: var(--ink-light);
+  font-size: 1.3rem;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+.dialog-close:hover {
+  background: oklch(22% 0.012 50 / 0.12);
+  color: var(--ink);
+}
+
+.dialog-top {
+  padding: 32px 28px 20px;
+  text-align: center;
+}
+.dialog-top .avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 12px;
+  background: var(--cream-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px oklch(22% 0.012 50 / 0.08);
+}
+.dialog-top .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.dialog-top h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-bottom: 2px;
+}
+.dialog-top .jp {
+  font-size: 0.85rem;
+  color: var(--ink-lighter);
+  margin-bottom: 6px;
+}
+.dialog-top .romaji {
+  font-size: 0.75rem;
+  color: var(--ink-lighter);
+}
+.dialog-top .color-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin: 0 4px;
+}
+
+.dialog-body {
+  padding: 0 28px 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--cream-3) transparent;
+}
+.dialog-body p {
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+.dialog-body .info-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--cream-3);
+  font-size: 0.9rem;
+}
+.dialog-body .info-row:last-child { border-bottom: none; }
+.dialog-body .info-row .label {
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+.dialog-body .info-row .value {
+  color: var(--ink-light);
+}
+.dialog-body .voice-line {
+  margin-top: 16px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+.dialog-body .section-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="wordmark">
+    ちいかわ <span class="jp">· Chiikawa</span><span class="dot">.</span>
+  </div>
+  <nav>
+    <a href="#trio">主角三人组</a>
+    <a href="#characters">角色图鉴</a>
+    <a href="#world">世界观</a>
+    <a href="#facts">小百科</a>
+    <a href="chiikawa_qize.html" title="测测你是哪个角色？" style="background:var(--pink);color:white;padding:6px 14px;border-radius:var(--radius-pill);font-weight:600;">🧪 性格测试</a>
+  </nav>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero__text">
+    <span class="tag">✨ 治愈系 · 日常</span>
+    <h1>
+      走进 <em>Chiikawa</em>
+      <span class="jp">—— なんか小さくてかわいいやつ</span>
+    </h1>
+    <p>
+      由日本插画家 <strong>nagano</strong> 创作的超人气漫画&动画作品。<br>
+      一群圆滚滚的小可爱们，在奇妙世界中过着既温馨又刺激的日常。<br>
+      2022 年动画化后席卷全球，成为现象级治愈 IP。
+    </p>
+  </div>
+</section>
+
+<!-- ===== MAIN TRIO ===== -->
+<section class="trio-section" id="trio">
+  <div class="section-head">
+    <h2>🐾 主角三人组</h2>
+    <p>故事的灵魂，三只性格各异的小可爱</p>
+  </div>
+  <div class="trio-grid">
+    <div class="trio-card">
+      <div class="trio-card__top">
+        <div class="trio-img">
+          <img src="https://static.wikia.nocookie.net/chiikawa/images/2/2c/AdorableCutieChiikawa.png" alt="ちいかわ">
+        </div>
+        <h3>吉伊卡哇</h3>
+        <p class="jp-name">ちいかわ / Chiikawa</p>
+      </div>
+      <div class="trio-card__body">
+        <p>主角。一只圆滚滚的白色小仓鼠。胆小爱哭、温柔善良，但在朋友遇到困难时会变得勇敢。运气很好，现在的房子是抽奖中的。除草证 5 级。</p>
+        <div class="voice">🔊 「哇…」「咿…」「いや！」</div>
+      </div>
+    </div>
+    <div class="trio-card">
+      <div class="trio-card__top">
+        <div class="trio-img">
+          <img src="https://static.wikia.nocookie.net/chiikawa/images/6/61/SweetBabyHachiware2.png" alt="ハチワレ">
+        </div>
+        <h3>小八</h3>
+        <p class="jp-name">ハチワレ / Hachiware</p>
+      </div>
+      <div class="trio-card__body">
+        <p>蓝白相间的猫型角色。主角团中唯一会完整说话的角色，担任大家的"翻译官"。乐观开朗、好奇心旺盛，爱弹吉他唱歌，片尾曲就是他唱的！</p>
+        <div class="voice">🔊 「诶～原来是这样！」「好喔～」</div>
+      </div>
+    </div>
+    <div class="trio-card">
+      <div class="trio-card__top">
+        <div class="trio-img">
+          <img src="https://static.wikia.nocookie.net/chiikawa/images/4/43/YahaUsagi.png" alt="うさぎ">
+        </div>
+        <h3>乌萨奇</h3>
+        <p class="jp-name">うさぎ / Usagi</p>
+      </div>
+      <div class="trio-card__body">
+        <p>精力充沛的兔子。整天发出「呜呀咿哈～」「蛤？」等怪叫。调皮捣蛋、神出鬼没，没人知道它住哪。但武力值最高，遇到危险总是冲在最前面！</p>
+        <div class="voice">🔊 「呜呀咿哈——！」「蛤？」「呀哈！」</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHARACTER GRID ===== -->
+<section class="char-grid-section" id="characters">
+  <div class="section-head">
+    <h2>📋 完整角色图鉴</h2>
+    <p>除了主角三人组，还有这些充满个性的小可爱们</p>
+  </div>
+  <div class="char-grid">
+    <div class="char-card" data-color="pink" data-character="chiikawa">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/2/2c/AdorableCutieChiikawa.png" alt="ちいかわ" loading="lazy">
+      </div>
+      <div class="char-card__name">吉伊卡哇</div>
+      <div class="char-card__name-jp">ちいかわ</div>
+      <div class="char-card__tags">
+        <span>主角</span>
+        <span>胆小温柔</span>
+      </div>
+      <div class="char-card__desc">白色小仓鼠，爱哭但勇敢。幸运体质，抽奖王。</div>
+    </div>
+    <div class="char-card" data-color="blue" data-character="hachiware">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/6/61/SweetBabyHachiware2.png" alt="ハチワレ" loading="lazy">
+      </div>
+      <div class="char-card__name">小八</div>
+      <div class="char-card__name-jp">ハチワレ</div>
+      <div class="char-card__tags">
+        <span>翻译官</span>
+        <span>乐天派</span>
+      </div>
+      <div class="char-card__desc">蓝白猫猫，唯一会说话的角色。爱唱歌弹吉他。</div>
+    </div>
+    <div class="char-card" data-color="yellow" data-character="usagi">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/4/43/YahaUsagi.png" alt="うさぎ" loading="lazy">
+      </div>
+      <div class="char-card__name">乌萨奇</div>
+      <div class="char-card__name-jp">うさぎ</div>
+      <div class="char-card__tags">
+        <span>战斗力 MAX</span>
+        <span>野性</span>
+      </div>
+      <div class="char-card__desc">兔兔，精力充沛爱搞怪。武力值最高。</div>
+    </div>
+    <div class="char-card" data-color="purple" data-character="momonga">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/a/a0/Momonga.png" alt="モモンガ" loading="lazy">
+      </div>
+      <div class="char-card__name">小桃</div>
+      <div class="char-card__name-jp">モモンガ</div>
+      <div class="char-card__tags">
+        <span>装可爱</span>
+        <span>任性</span>
+      </div>
+      <div class="char-card__desc">飞鼠。喜欢装可爱求夸奖，任性爱闹。</div>
+    </div>
+    <div class="char-card" data-color="orange" data-character="kurimanju">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/9/93/TastyKurimanju.png" alt="くりまんじゅう" loading="lazy">
+      </div>
+      <div class="char-card__name">栗子馒头前辈</div>
+      <div class="char-card__name-jp">くりまんじゅう</div>
+      <div class="char-card__tags">
+        <span>可靠</span>
+        <span>美食家</span>
+      </div>
+      <div class="char-card__desc">黄棕色团子，沉稳可靠的美食家。考取了饮酒证照。</div>
+    </div>
+    <div class="char-card" data-color="green" data-character="rakko">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/6/63/FightOnRakko.png" alt="ラッコ" loading="lazy">
+      </div>
+      <div class="char-card__name">海獺勇者</div>
+      <div class="char-card__name-jp">ラッコ</div>
+      <div class="char-card__tags">
+        <span>讨伐 No.1</span>
+        <span>偶像</span>
+      </div>
+      <div class="char-card__desc">讨伐榜第一名！披风木剑，爱吃甜食。小可爱们的偶像。</div>
+    </div>
+    <div class="char-card" data-color="yellow" data-character="shisa">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/1/12/RamenPleaseShisa.png" alt="シーサー" loading="lazy">
+      </div>
+      <div class="char-card__name">狮萨</div>
+      <div class="char-card__name-jp">シーサー</div>
+      <div class="char-card__tags">
+        <span>热血</span>
+        <span>打工人</span>
+      </div>
+      <div class="char-card__desc">以冲绳风狮爷为原型。为在拉面店工作考取了超级打工资格。</div>
+    </div>
+    <div class="char-card" data-color="pink" data-character="kani">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/7/76/Kani-removebg-preview_%281%29.png" alt="古本" loading="lazy">
+      </div>
+      <div class="char-card__name">古本</div>
+      <div class="char-card__name-jp">カニ</div>
+      <div class="char-card__tags">
+        <span>书店</span>
+        <span>知识派</span>
+      </div>
+      <div class="char-card__desc">喜欢看书的螃蟹，经营着自己的书店。</div>
+    </div>
+    <div class="char-card" data-color="green" data-character="armor">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png" alt="手作り鎧" loading="lazy">
+      </div>
+      <div class="char-card__name">手工铠甲</div>
+      <div class="char-card__name-jp">手作り鎧</div>
+      <div class="char-card__tags">
+        <span>手工达人</span>
+        <span>温柔</span>
+      </div>
+      <div class="char-card__desc">穿着手工铠甲的盔甲人，性格温柔，擅长手工活。</div>
+    </div>
+    <div class="char-card" data-color="blue" data-character="ramen">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png" alt="ラーメン鎧" loading="lazy">
+      </div>
+      <div class="char-card__name">拉面铠甲</div>
+      <div class="char-card__name-jp">ラーメン鎧</div>
+      <div class="char-card__tags">
+        <span>拉面师傅</span>
+        <span>话少</span>
+      </div>
+      <div class="char-card__desc">在拉面店工作的铠甲人，话不多但手艺一流。</div>
+    </div>
+    <div class="char-card" data-color="purple" data-character="anoko">
+      <div class="char-card__img">
+        <img src="https://static.wikia.nocookie.net/chiikawa/images/b/ba/Anoko1.png" alt="あのこ" loading="lazy">
+      </div>
+      <div class="char-card__name">那孩子</div>
+      <div class="char-card__name-jp">あのこ</div>
+      <div class="char-card__tags">
+        <span>神秘</span>
+        <span>？？？</span>
+      </div>
+      <div class="char-card__desc">神秘的幽灵般的存在，真实身份充满谜团。</div>
+    </div>
+    <div class="char-card" data-color="orange" data-character="kabuto">
+      <div class="char-card__img" style="font-size: 2.2rem; display: flex; align-items: center; justify-content: center; background: var(--cream-2);">🐛</div>
+      <div class="char-card__name">独角仙</div>
+      <div class="char-card__name-jp">カブトムシ</div>
+      <div class="char-card__tags">
+        <span>昆虫</span>
+        <span>力气大</span>
+      </div>
+      <div class="char-card__desc">力气很大的独角仙，经常帮助小可爱们搬运重物。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CHARACTER DIALOGS ===== -->
+<dialog class="character-dialog" id="dialog-chiikawa">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(96% 0.04 80);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/2/2c/AdorableCutieChiikawa.png" alt="ちいかわ"></div>
+    <h2>吉伊卡哇</h2>
+    <p class="jp">ちいかわ</p>
+    <p class="romaji">Chiikawa</p>
+  </div>
+  <div class="dialog-body">
+    <p>本作主角。一只圆滚滚的白色小仓鼠，由作者 nagano 于 2017 年最初绘制。虽然胆小爱哭，但在朋友遇到困难时会变得格外勇敢。自帶幸运体质，抽奖运极好。</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">白色小仓鼠</span></div>
+    <div class="info-row"><span class="label">生日</span><span class="value">2017年5月1日</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">青木遥（日）· 关云月（中）</span></div>
+    <div class="info-row"><span class="label">武器</span><span class="value">粉色刺叉</span></div>
+    <div class="info-row"><span class="label">等级</span><span class="value">除草 5 级</span></div>
+    <div class="info-row"><span class="label">住所</span><span class="value">抽奖中的白色房子 🏠</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.06 355); color: var(--ink);">🔊 「哇…」「咿…」「いや！」</div>
+    <p class="section-label">角色简介</p>
+    <p>性格温柔善良，心思细腻。虽然经常因生活的小挫折而流泪，但总能在朋友的支持下重新振作。对朋友非常重视，在关键时刻会挺身而出。运气很好——现在的白色房子、粉色刺叉都是抽奖得来的。不过考试运就差了很多，为了考取除草证付出了巨大的努力，最终成功通过，让全世界的粉丝都为之欢呼！</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-hachiware">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(95% 0.04 220);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/6/61/SweetBabyHachiware2.png" alt="ハチワレ"></div>
+    <h2>小八</h2>
+    <p class="jp">ハチワレ</p>
+    <p class="romaji">Hachiware</p>
+  </div>
+  <div class="dialog-body">
+    <p>主角团之一，蓝白相间的猫型角色。名字来源于头部八字的蓝色花纹。是三个主角中唯一能完整使用人类语言说话的角色，因此常担任吉伊和乌萨奇的"翻译官"。</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">蓝白猫</span></div>
+    <div class="info-row"><span class="label">生日</span><span class="value">2020年5月1日</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">田中诚人（日）· 武桢鑫（中）</span></div>
+    <div class="info-row"><span class="label">武器</span><span class="value">蓝色刺叉</span></div>
+    <div class="info-row"><span class="label">等级</span><span class="value">除草 5 级</span></div>
+    <div class="info-row"><span class="label">住所</span><span class="value">没有门的山洞 🏔️</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.06 220); color: oklch(40% 0.1 240);">🔊 「诶～原来是这样！」「好喔～」</div>
+    <p class="section-label">角色简介</p>
+    <p>乐观开朗、好奇心旺盛的乐天派。经常用正面的态度鼓励朋友们，能读懂吉伊的内心想法并帮他说出来。独立坚强，过往总是一个解决所有问题。非常珍惜与朋友之间的回忆。爱弹吉他唱歌——动画片尾曲《自言自语》就是他唱的！</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-usagi">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(96% 0.04 70);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/4/43/YahaUsagi.png" alt="うさぎ"></div>
+    <h2>乌萨奇</h2>
+    <p class="jp">うさぎ</p>
+    <p class="romaji">Usagi</p>
+  </div>
+  <div class="dialog-body">
+    <p>主角团之一，精力充沛的兔子。整天发出「呜呀咿哈～」「蛤？」等怪叫，神出鬼没。是三人中武力值最高的，遇到危险总是冲在最前面，也是三人中除草等级最高的！</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">兔子</span></div>
+    <div class="info-row"><span class="label">生日</span><span class="value">2019年1月22日</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">小泽亚李（日）· 简单（中）</span></div>
+    <div class="info-row"><span class="label">等级</span><span class="value">除草 2 级（三人中最高！）</span></div>
+    <div class="info-row"><span class="label">住所</span><span class="value">不明 🕵️</span></div>
+    <div class="info-row"><span class="label">MBTI</span><span class="value">ESTP（企业家人格）</span></div>
+    <div class="voice-line" style="background: oklch(94% 0.08 70); color: oklch(50% 0.14 70);">🔊 「呜呀咿哈——！」「蛤？」「呀哈！」</div>
+    <p class="section-label">角色简介</p>
+    <p>调皮捣蛋，行为经常不按常理出牌。喜欢捉弄吉伊，但其实非常在意朋友。乐天的灵魂人物，经常带动整个群体的气氛。到目前没人知道它究竟住在哪里。2025年7月获得2级除草证，是主角中等级最高的，战斗力也是三人中最强。MBTI 性格类型为 ESTP，热爱冒险，不受世俗规则束缚。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-momonga">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(95% 0.04 300);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/a/a0/Momonga.png" alt="モモンガ"></div>
+    <h2>小桃</h2>
+    <p class="jp">モモンガ</p>
+    <p class="romaji">Momonga</p>
+  </div>
+  <div class="dialog-body">
+    <p>飞鼠型角色。性格任性骄纵，非常喜欢装可爱博取关注与夸奖。如果被拒绝会哭闹或发脾气。登场台词：「终于成功了！我要尽情装可爱！」</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">飞鼠</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">井口裕香（日）· 叶知秋（中）</span></div>
+    <div class="info-row"><span class="label">住所</span><span class="value">无限白米泉附近 🍚</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.06 300); color: oklch(45% 0.1 300);">🔊 「夸我！快夸我！」</div>
+    <p class="section-label">角色简介</p>
+    <p>粉丝间有一个著名的"灵魂交换"理论——小桃可能和一只叫"大强"的怪物交换了身体，小桃体内住着真正的怪物，而怪物体内才是真正的飞鼠灵魂。证据是它被怪物追赶时曾大喊「还给我！！」。小桃自己发现了"无限白米泉"，主要靠白米饭维生。虽然任性，但和古本（螃蟹书店）是好朋友。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-kurimanju">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(95% 0.04 70);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/9/93/TastyKurimanju.png" alt="くりまんじゅう"></div>
+    <h2>栗子馒头前辈</h2>
+    <p class="jp">くりまんじゅう</p>
+    <p class="romaji">Kurimanju</p>
+  </div>
+  <div class="dialog-body">
+    <p>外形像日式点心栗子馒头的角色，但实际上是一只蜜獾。表面憨厚可爱，性格却像个中年大叔——爱喝酒、爱吃零食，说话豪爽。</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">蜜獾（形似栗子馒头）</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">浅井孝行（日）· 图特哈蒙（中）</span></div>
+    <div class="info-row"><span class="label">证照</span><span class="value">饮酒证照 🍶</span></div>
+    <div class="voice-line" style="background: oklch(94% 0.06 70); color: oklch(50% 0.12 70);">🔊 「哈——！好酒！」</div>
+    <p class="section-label">角色简介</p>
+    <p>平时话不多，但行事豪爽、淡然自若。经过艰辛的学习考取了饮酒证照。平时喜欢寻找搭配不同酒类的好吃零食，饮酒后会发出豪迈的感叹。在关键时刻总是很可靠，是大家的支柱之一。虽然看起来像甜点，但战斗力和酒量都不可小觑。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-rakko">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(95% 0.04 160);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/6/63/FightOnRakko.png" alt="ラッコ"></div>
+    <h2>海獺勇者</h2>
+    <p class="jp">ラッコ</p>
+    <p class="romaji">Rakko</p>
+  </div>
+  <div class="dialog-body">
+    <p>讨伐榜排名第一的传奇勇者！头上有十字疤痕，身披披风手持木剑，战斗力极高。是小可爱们崇拜的偶像，也是吉伊和小八的师傅。</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">海獺</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">内田雄马（日）· 郝祥海（中）</span></div>
+    <div class="info-row"><span class="label">排名</span><span class="value">讨伐榜 No.1 🏆</span></div>
+    <div class="info-row"><span class="label">爱好</span><span class="value">吃甜食 🍰</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.06 160); color: oklch(40% 0.1 160);">🔊 「跟着我！」</div>
+    <p class="section-label">角色简介</p>
+    <p>拥有高强的战斗实力，通常单独行动执行高难度讨伐任务。虽然实力超群，但性格慷慨友善，乐意指导后辈。经常和吉伊他们一起吃饭并分享经验。意外的反差萌是——这位勇者超爱吃甜食！有自己的车，是有车一族。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-shisa">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(94% 0.06 90);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/1/12/RamenPleaseShisa.png" alt="シーサー"></div>
+    <h2>狮萨</h2>
+    <p class="jp">シーサー</p>
+    <p class="romaji">Shisa</p>
+  </div>
+  <div class="dialog-body">
+    <p>以冲绳的守护神「风狮爷」（シーサー）为原型的角色。在拉面店「郎」工作，是拉面铠甲的徒弟。性格认真热血，为了在拉面店工作考取了超级打工资格。</p>
+    <div class="info-row"><span class="label">原型</span><span class="value">冲绳风狮爷</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">岛袋美由利（日）· 阎么么（中）</span></div>
+    <div class="info-row"><span class="label">职业</span><span class="value">拉面店「郎」店员 🍜</span></div>
+    <div class="info-row"><span class="label">目标</span><span class="value">考取饮酒证照，和师傅喝酒</span></div>
+    <div class="voice-line" style="background: oklch(94% 0.08 70); color: oklch(50% 0.12 70);">🔊 「我会努力的！」</div>
+    <p class="section-label">角色简介</p>
+    <p>非常热爱美食，尤其是拉面。认真教导其他小可爱们关于食物的品味。目前正在努力学习，目标是考取饮酒证照，梦想是能和拉面店师傅一起喝酒。在第二卷漫画中首次登场，之后成为常驻角色。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-kani">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(93% 0.06 355);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/7/76/Kani-removebg-preview_%281%29.png" alt="古本"></div>
+    <h2>古本</h2>
+    <p class="jp">古本屋 / カニ</p>
+    <p class="romaji">Furuhonya / Kani</p>
+  </div>
+  <div class="dialog-body">
+    <p>经营二手书店的粉色螃蟹角色。最初只是没有名字的路人角色，后来小桃给它戴上了螃蟹头带后正式有了名字和设计。性格温柔善良，热爱阅读。</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">螃蟹</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">春海百乃（日）</span></div>
+    <div class="info-row"><span class="label">职业</span><span class="value">二手书店老板 📚</span></div>
+    <div class="info-row"><span class="label">生日</span><span class="value">2020年8月29日</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.06 355); color: var(--ink);">🔊 「欢迎光临～」</div>
+    <p class="section-label">角色简介</p>
+    <p>和小桃是好朋友（尽管小桃性格任性）。头上戴的螃蟹头带是小桃送的礼物。温和有礼，说话轻声细语，是 Chiikawa 世界里少数的和平主义者。「古本」在日语中就是"旧书"的意思。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-armor">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(94% 0.03 160);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png" alt="鎧"></div>
+    <h2>手工铠甲</h2>
+    <p class="jp">手作り鎧さん</p>
+    <p class="romaji">Tezukuri Yoroi-san</p>
+  </div>
+  <div class="dialog-body">
+    <p>穿着手工打造的可爱铠甲的盔甲人。和其他盔甲人不同，他性格温柔，热爱手工制作。喜欢可爱的东西，会亲手缝制睡衣。</p>
+    <div class="info-row"><span class="label">声优</span><span class="value">杉田智和（日）· 乔木心（中）</span></div>
+    <div class="info-row"><span class="label">特长</span><span class="value">手工制作 🧵</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.04 160); color: oklch(40% 0.08 160);">🔊 「做出来了哦～」</div>
+    <p class="section-label">角色简介</p>
+    <p>盔甲人是 Chiikawa 世界中的重要种族，负责提供工作和经营商店。手工铠甲是其中最为温柔的一位，热爱手工艺，缝制的睡衣非常受欢迎。与负责劳动管理和拉面店的其他盔甲人是同事。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-ramen">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(94% 0.04 220);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/9/96/YoroiSansTransparent.png" alt="ラーメン鎧"></div>
+    <h2>拉面铠甲</h2>
+    <p class="jp">ラーメンの鎧さん</p>
+    <p class="romaji">Ramen no Yoroi-san</p>
+  </div>
+  <div class="dialog-body">
+    <p>在拉面店「郎」担任主厨的盔甲人。话不多，但手艺一流。是狮萨的师傅。他的拉面店是 Chiikawa 世界中最受欢迎的美食据点之一。</p>
+    <div class="info-row"><span class="label">声优</span><span class="value">松冈祯丞（日）· 图特哈蒙（中）</span></div>
+    <div class="info-row"><span class="label">职业</span><span class="value">拉面店「郎」主厨 🍜</span></div>
+    <div class="info-row"><span class="label">徒弟</span><span class="value">狮萨</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.04 220); color: oklch(40% 0.08 240);">🔊 「……请慢用。」</div>
+    <p class="section-label">角色简介</p>
+    <p>话不多但手艺精湛的拉面师傅。狮萨就是仰慕他才到店里工作的。他的拉面受到所有小可爱的喜爱，连海獺勇者也是常客。其他盔甲人包括负责分发工作的劳动铠甲和手巧的手工铠甲。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-anoko">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(94% 0.04 300);">
+    <div class="avatar"><img src="https://static.wikia.nocookie.net/chiikawa/images/b/ba/Anoko1.png" alt="あのこ"></div>
+    <h2>那孩子</h2>
+    <p class="jp">あのこ</p>
+    <p class="romaji">Anoko</p>
+  </div>
+  <div class="dialog-body">
+    <p>外表看起来毛茸茸的巨大怪物，但据推测它曾经是吉伊在工厂工作的同事。和其他怪物不同，它似乎记得自己作为小可爱时的记忆，并且并不怀念过去。</p>
+    <div class="info-row"><span class="label">身份</span><span class="value">怪物（前同事？）</span></div>
+    <div class="info-row"><span class="label">声优</span><span class="value">青山吉能（日）</span></div>
+    <div class="info-row"><span class="label">危险度</span><span class="value">⚠️ 高</span></div>
+    <div class="voice-line" style="background: oklch(93% 0.06 300); color: oklch(45% 0.1 300);">🔊 「…………」</div>
+    <p class="section-label">角色简介</p>
+    <p>Chiikawa 世界中充满谜团的存在。它经常袭击小可爱，但又似乎在看到吉伊时会有特殊的反应。虽然长得可爱毛茸茸，但被列为危险怪物。关于它过去的真实身份，粉丝圈中有许多猜测和理论。</p>
+  </div>
+</dialog>
+
+<dialog class="character-dialog" id="dialog-kabuto">
+  <button class="dialog-close" onclick="this.closest('dialog').close()">✕</button>
+  <div class="dialog-top" style="background: oklch(94% 0.06 70);">
+    <div class="avatar" style="font-size: 2.5rem;">🐛</div>
+    <h2>独角仙</h2>
+    <p class="jp">カブトムシ</p>
+    <p class="romaji">Kabutomushi</p>
+  </div>
+  <div class="dialog-body">
+    <p>力气很大的独角仙，经常帮助小可爱们搬运重物。虽然外表威猛，但性格温和，是 Chiikawa 世界中可靠的劳动伙伴。</p>
+    <div class="info-row"><span class="label">物种</span><span class="value">独角仙</span></div>
+    <div class="info-row"><span class="label">特长</span><span class="value">搬运重物 💪</span></div>
+    <div class="voice-line" style="background: oklch(94% 0.06 70); color: oklch(50% 0.1 70);">🔊 「嗯——！」</div>
+    <p class="section-label">角色简介</p>
+    <p>Chiikawa 世界中勤劳的昆虫角色之一。以强大的力气著称，经常出现在需要体力劳动的场合。虽然话不多，但总是默默地帮助大家，是世界中不可或缺的可靠存在。</p>
+  </div>
+</dialog>
+<section class="facts-section" id="facts">
+  <div class="facts-inner">
+    <div class="section-head">
+      <h2>💡 Chiikawa 小百科</h2>
+      <p>这些冷知识你知道吗？</p>
+    </div>
+    <ul class="facts-list">
+      <li>
+        <span class="icon">🎨</span>
+        <span><strong>作者 nagano</strong> 最初只是在 Twitter 上随手画了这些角色，没想到一夜爆红，如今已成为年收入数十亿日元的超级 IP。</span>
+      </li>
+      <li>
+        <span class="icon">🗣️</span>
+        <span>吉伊和乌萨奇<strong>不会说人类的语言</strong>，只会发出单音节的声音。小八是三人中唯一能正常说话的，因此常担任"翻译"。</span>
+      </li>
+      <li>
+        <span class="icon">⚔️</span>
+        <span>故事表面治愈可爱，但<strong>黑暗起来毫不手软</strong>——讨伐怪物的战斗、考试压力、甚至死亡情节，被粉丝称为"披着可爱外衣的成人童话"。</span>
+      </li>
+      <li>
+        <span class="icon">🏠</span>
+        <span>吉伊现在的白色房子是<strong>抽奖中的</strong>！他的抽奖运极好，但考试运却很差，考除草证考了好多次才通过。</span>
+      </li>
+      <li>
+        <span class="icon">🎵</span>
+        <span>动画片尾曲《自言自语》（ひとりごと）是由<strong>小八的声优田中诚人</strong>演唱的，歌曲中包含了小八用吉他弹唱的片段。</span>
+      </li>
+      <li>
+        <span class="icon">🔄</span>
+        <span>粉丝圈有一个著名理论：小桃（飞鼠）可能和一只叫"大强"的怪物<strong>交换了灵魂</strong>——小桃身体里住着怪物，而怪物的身体里才是真正的飞鼠。</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== WORLD LORE ===== -->
+<section class="facts-section" id="world" style="background: var(--cream-2);">
+  <div class="facts-inner">
+    <div class="section-head">
+      <h2>🌍 Chiikawa 世界观</h2>
+      <p>可爱画风背后，是一个充满规则与秘密的奇妙世界</p>
+    </div>
+    <ul class="facts-list">
+      <li>
+        <span class="icon">🏞️</span>
+        <span><strong>世界构成</strong> — Chiikawa 的世界充满了森林、草原等自然景色，周围长着巨大的食物（像植物一样自生）。也有住宅、商店和城镇，存在货币经济和互联网，和现实世界一样有着完整的文明体系。</span>
+      </li>
+      <li>
+        <span class="icon">💼</span>
+        <span><strong>工作系统</strong> — 小可爱们主要通过「除草」（パパ抜き）和「讨伐」（討伐）两种工作来维持生计。除草是按照等级划分的工作，等级越高报酬越高；讨伐则是接受任务去消灭危险怪物，报酬更高但风险也更大。</span>
+      </li>
+      <li>
+        <span class="icon">📜</span>
+        <span><strong>资格证考试制度</strong> — 这个世界有着严格的资格证体系！除草证分为 1–5 级；此外还有超级打工资格证、饮酒证照等。考取不同资格可以从事不同工作、获得更高报酬，甚至解锁"喝酒"的成人权限。</span>
+      </li>
+      <li>
+        <span class="icon">⚔️</span>
+        <span><strong>讨伐与奇美拉</strong> — 这个世界存在着会威胁小可爱安全的怪物「奇美拉」（キメラ）。盔甲人会发布讨伐任务，小可爱们组队去消灭怪物。维持着小可爱与奇美拉之间微妙的生态平衡——如果失衡，会导致粮食危机等严重后果。</span>
+      </li>
+      <li>
+        <span class="icon">🛡️</span>
+        <span><strong>盔甲人（鎧さん）</strong> — 身穿盔甲的人形种族，是小可爱世界的管理者。他们负责发布工作、经营商店、管理城镇。有劳动铠甲（发工作）、手工铠甲（做手工）、拉面铠甲（开拉面店「郎」）等多位个体，品性各异。</span>
+      </li>
+      <li>
+        <span class="icon">🌓</span>
+        <span><strong>暗黑反乌托邦</strong> — 表面治愈可爱，实则是一个严酷的世界。小可爱们可能遭遇怪物袭击、考试失败、失去朋友，甚至被洗脑变成石头。这种"可爱与残酷并存"的反差感，正是 Chiikawa 最独特的魅力所在。</span>
+      </li>
+      <li>
+        <span class="icon">🎬</span>
+        <span><strong>动画制作</strong> — 由知名动画工房制作，2022年4月在富士电视台《闹钟电视》内首播，每集仅 1 分钟。已播至 340+ 集，2026 年 7 月电影版《人鱼之岛的秘密》上映！</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section">
+  <h2>💕 入坑 Chiikawa</h2>
+  <p>动画每周二、五在富士电视台播出，YouTube 限时公开中！</p>
+  <a href="https://www.youtube.com/channel/UC0e6qMpvpN4l5vyRiNsxR1Q" target="_blank" class="btn" rel="noopener">去官方 YouTube 看看 →</a>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <p>Chiikawa（ちいかわ）© <span class="love">nagano</span> / 株式會社 SPIRAL CUTE</p>
+  <p style="margin-top: 4px; font-size: 0.75rem;">本页面为粉丝向介绍，仅供学习交流 · 由 302.AI 多模态创作助手生成</p>
+</footer>
+
+<script>
+// Character card click → open dialog
+document.querySelectorAll('.char-card').forEach(card => {
+  card.addEventListener('click', function() {
+    const id = this.dataset.character;
+    if (!id) return;
+    const dialog = document.getElementById('dialog-' + id);
+    if (dialog) dialog.showModal();
+  });
+});
+
+// Close dialog — backdrop click + button click
+document.querySelectorAll('.character-dialog').forEach(d => {
+  // Close on backdrop click
+  d.addEventListener('click', function(e) {
+    if (e.target === this) this.close();
+  });
+  // Prevent clicks inside the dialog from closing it
+  d.querySelector('.dialog-top')?.addEventListener('click', e => e.stopPropagation());
+  d.querySelector('.dialog-body')?.addEventListener('click', e => e.stopPropagation());
+});
+</script>
+
+</body>
+</html>
